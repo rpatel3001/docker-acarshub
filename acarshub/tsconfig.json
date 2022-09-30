@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "acars-server" },
+    { "path": "types" },
+    { "path": "web-client" },
+    { "path": "web-server" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "acarshub",
+  "version": "4.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Fred Clausen",
+  "license": "MIT",
+  "workspaces": [
+    "web-server",
+    "web-client",
+    "acars-server",
+    "types"
+  ],
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}
