@@ -7,7 +7,9 @@
     "sass": "^1.55.0"
   },
   "scripts": {
-    "build-dev": "sass --no-source-map --watch scss:dist"
+    "clean": "rm -rf dist",
+    "start-dev": "npm run clean && sass --no-source-map --watch scss:dist",
+    "run-prod": "npm run clean && sass --no-source-map"
   },
   "keywords": [],
   "author": "Fred Clausen",

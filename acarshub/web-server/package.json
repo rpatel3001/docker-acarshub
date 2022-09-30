@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start-dev": "nodemon ./src/index.ts"
+    "clean": "rm -rf dist",
+    "start-dev": "npm run clean && nodemon ./src/index.ts",
+    "start-prod": "npm-run-all clean build-prod && node dist/index.js",
+    "build-dev": "npm run clean && tsc",
+    "build-prod": "npm run clean && tsc"
   },
   "keywords": [],
   "author": "Fred Clausen",

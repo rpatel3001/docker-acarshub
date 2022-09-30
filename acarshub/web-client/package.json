@@ -23,5 +23,9 @@
   },
   "keywords": [],
   "author": "Fred Clausen",
-  "license": "GPL-3.0-only"
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "socket.io": "^4.5.2",
+    "socket.io-client": "^4.5.2"
+  }
 }

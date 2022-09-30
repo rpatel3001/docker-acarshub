@@ -5,12 +5,16 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
-    "build-dev": "nodemon ./src/index.ts"
+    "start-dev": "npm-run-all clean && nodemon ./src/index.ts",
+    "start-prod": "npm run build-prod && node dist/index.js",
+    "build-dev": "npm-run-all clean && tsc",
+    "build-prod": "npm-run-all clean && tsc"
   },
   "keywords": [],
   "author": "Fred Clausen",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "command-line-args": "^5.2.1"
+    "command-line-args": "^5.2.1",
+    "socket.io": "^4.5.2"
   }
 }
