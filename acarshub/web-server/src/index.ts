@@ -9,11 +9,10 @@ import path from "path";
 const app = express();
 const port = 8080;
 
-app.use(express.static(path.join(__dirname, "./")));
+app.use(express.static(path.join(__dirname, "../../web-client/dist")));
 
 app.get("/", (_, res) => {
-  //res.sendFile(path.join(__dirname, "./index.html"));
-  res.send("Hello World");
+  res.sendFile(path.join(__dirname, "../../web-client/dist/index.html"));
 });
 
 app.get("*", (_, res) => {

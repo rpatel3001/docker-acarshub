@@ -132,3 +132,4 @@ rootfs/webapp/templates/helppage.MD
 rootfs/webapp/templates
 rootfs/webapp/static
 acarshub/node_modules
+**/dist/**
