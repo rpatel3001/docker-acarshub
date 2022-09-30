@@ -1,0 +1,15 @@
+{
+  "name": "web-css",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "sass": "^1.55.0"
+  },
+  "scripts": {
+    "build-dev": "sass --no-source-map --watch scss:dist"
+  },
+  "keywords": [],
+  "author": "Fred Clausen",
+  "license": "GPL-3.0-only"
+}
