@@ -14,7 +14,7 @@ const commandOptions: ACARSCommandLine = [
   { name: "tar1090url", type: String, multiple: true, default: undefined },
   { name: "log-level", type: Number, default: 3 },
   { name: "enable-adsb", type: Boolean, default: false },
-  { name: "adsb-url", type: String, multiple: true, default: undefined },
+  { name: "adsb-url", type: String, default: undefined },
   { name: "adsb-lat", type: Number, default: undefined },
   { name: "adsb-lon", type: Number, default: undefined },
   { name: "adsb-disable-range-rings", type: Boolean, default: false },
@@ -54,6 +54,8 @@ const output_options: {
     },
   }
 );
+
+// TODO: Sanity check the entire input before procededing
 
 commandOptions.forEach((option: CommandLineOption) => {
   let getter_name = `${option.name

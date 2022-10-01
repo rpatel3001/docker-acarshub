@@ -17,7 +17,7 @@ export interface ACARSOption {
   Tar1090url: string[] | undefined;
   LogLevel: number;
   EnableAdsb: boolean;
-  AdsbUrl: string[] | undefined;
+  AdsbUrl: string | undefined;
   AdsbLat: number | undefined;
   AdsbLon: number | undefined;
   AdsbDisableRangeRings: boolean;

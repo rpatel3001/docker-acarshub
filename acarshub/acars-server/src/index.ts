@@ -2,6 +2,7 @@ import { createLogger, format, transports, level } from "winston";
 import { Server, Socket } from "socket.io";
 import { ACARSOption } from "types/src";
 import { MessageReceiver } from "./message-receiver";
+import { ADSBReceiver } from "./adsb-receiver";
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 const options: ACARSOption = options_getter.options;
@@ -74,6 +75,12 @@ if (options.EnableVdlm) {
     const vdlm_server = new MessageReceiver("vdlm", source);
     vdlm_server.watch_for_messages();
   });
+}
+
+if (options.EnableAdsb && typeof options.AdsbUrl === "string") {
+  logger.info("Starting ADSB receivers");
+  const adsb_receiver = new ADSBReceiver(options.AdsbUrl);
+  adsb_receiver.continous_fetch_adsb();
 }
 
 logger.info(`Server started with log level ${log_level.toUpperCase()}`);

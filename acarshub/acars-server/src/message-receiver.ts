@@ -13,7 +13,7 @@ export class MessageReceiver {
     const sock = new zmq.Subscriber();
 
     sock.connect(`tcp://${this._source_url}`);
-    sock.subscribe("acars");
+    sock.subscribe("");
     console.log(`${this._source_url}`);
 
     for await (const [topic, msg] of sock) {
