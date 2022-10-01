@@ -1,26 +1,20 @@
-const commandLineArgs = require("command-line-args");
 import { createLogger, format, transports, level } from "winston";
 import { Server, Socket } from "socket.io";
+import { ACARSOption } from "types/src";
+const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
+const options: ACARSOption = options_getter.options;
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${level.toUpperCase()}][${label.toUpperCase()}]: ${message}`;
+  return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${label
+    .toUpperCase()
+    .padEnd(16, " ")}]: ${message}`;
 });
 
-const commandOptions = [
-  { name: "db-save-all", type: Boolean, default: false },
-  { name: "log-level", type: Number, default: 3 },
-];
-
-const options = commandLineArgs(commandOptions);
 let log_level = "info";
 
-if (
-  options["log-level"] &&
-  options["log-level"] >= 3 &&
-  options["log-level"] <= 5
-) {
-  switch (options["log-level"]) {
+if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 5) {
+  switch (options.LogLevel) {
     case 3:
       log_level = "info";
       break;
@@ -30,6 +24,9 @@ if (
     case 5:
       log_level = "debug";
       break;
+    default:
+      log_level = "info";
+      break;
   }
 }
 
@@ -37,19 +34,6 @@ const logger = createLogger({
   level: log_level,
   transports: [new transports.Console()],
   format: combine(label({ label: "ACARS Hub Server" }), timestamp(), myFormat),
-});
-
-commandOptions.forEach((option) => {
-  if (!options.hasOwnProperty(option.name)) {
-    logger.verbose(
-      `${option.name} not defined. Using default value: ${option.default}`
-    );
-    options[option.name] = option.default;
-  } else {
-    logger.verbose(
-      `${option.name} defined. Using value: ${options[option.name]}`
-    );
-  }
 });
 
 // Socket setup
@@ -74,4 +58,4 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-logger.info("Server started");
+logger.info(`Server started with log level ${log_level.toUpperCase()}`);
