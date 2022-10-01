@@ -22,9 +22,7 @@ export interface ACARSOption {
   AdsbLon: number | undefined;
   AdsbDisableRangeRings: boolean;
   EnableAcars: boolean;
-  AcarsPort: number;
   EnableVdlm: boolean;
-  VdlmPort: number;
   AcarsSource: string[];
   VdlmSource: string[];
 }

@@ -19,9 +19,7 @@ const commandOptions: ACARSCommandLine = [
   { name: "adsb-lon", type: Number, default: undefined },
   { name: "adsb-disable-range-rings", type: Boolean, default: false },
   { name: "enable-acars", type: Boolean, default: false },
-  { name: "acars-port", type: Number, default: 15551 },
   { name: "enable-vdlm", type: Boolean, default: false },
-  { name: "vdlm-port", type: Number, default: 15556 },
   {
     name: "acars-source",
     type: String,
@@ -39,6 +37,7 @@ const commandOptions: ACARSCommandLine = [
 const options: { [index: string]: CommandLineOption } =
   commandLineArgs(commandOptions);
 // TODO: Can we type this correctly? Would be nice to ensure that as we add options the options are acceptable.....
+// Although, further thinking, the command line parser will fail if the user supplied shit option names or whatever
 const output_options: {
   [index: string]: any;
 } = new Proxy(

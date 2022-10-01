@@ -1,6 +1,7 @@
 import { createLogger, format, transports, level } from "winston";
 import { Server, Socket } from "socket.io";
 import { ACARSOption } from "types/src";
+import { MessageReceiver } from "./message-receiver";
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 const options: ACARSOption = options_getter.options;
@@ -57,5 +58,22 @@ io.on("connection", (socket: Socket) => {
     console.log("ping from client");
   });
 });
+
+logger.info(options.EnableAcars);
+if (options.EnableAcars) {
+  logger.info("Starting ACARS receivers");
+  options.AcarsSource.forEach((source) => {
+    const acars_server = new MessageReceiver("acars", source);
+    acars_server.watch_for_messages();
+  });
+}
+
+if (options.EnableVdlm) {
+  logger.info("Starting VDLM receivers");
+  options.VdlmSource.forEach((source) => {
+    const vdlm_server = new MessageReceiver("vdlm", source);
+    vdlm_server.watch_for_messages();
+  });
+}
 
 logger.info(`Server started with log level ${log_level.toUpperCase()}`);
