@@ -58,15 +58,14 @@ const output_options: {
 // TODO: Sanity check the entire input before procededing
 
 commandOptions.forEach((option: CommandLineOption) => {
-  let getter_name = `${option.name
+  const name = option.name;
+  let getter_name = `${name
     .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
       return index == 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, "")
     .replace(/-/g, "")}`;
   getter_name = getter_name.charAt(0).toUpperCase() + getter_name.substring(1);
-
-  const name = option.name;
 
   if (!options.hasOwnProperty(name)) {
     output_options[getter_name] = option.default;
