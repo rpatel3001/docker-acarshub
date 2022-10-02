@@ -15,7 +15,7 @@ const myFormat = printf(({ level, message, label, timestamp, source }) => {
 
 let log_level = "info";
 
-if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 5) {
+if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 6) {
   switch (options.LogLevel) {
     case 3:
       log_level = "info";
@@ -25,6 +25,9 @@ if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 5) {
       break;
     case 5:
       log_level = "debug";
+      break;
+    case 6:
+      log_level = "silly";
       break;
     default:
       log_level = "info";

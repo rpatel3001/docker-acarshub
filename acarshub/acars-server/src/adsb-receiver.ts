@@ -25,7 +25,7 @@ export class ADSBReceiver {
       if (!response.ok)
         throw new Error(`unexpected response ${response.statusText}`);
       const data = await response.json();
-      this._logger.debug(JSON.stringify(data));
+      this._logger.silly(JSON.stringify(data));
     } catch (err) {
       this._logger.error(err);
     }
