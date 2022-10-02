@@ -11,7 +11,7 @@ export class ADSBReceiver {
     this._logger = logger;
   }
 
-  continous_fetch_adsb = () => {
+  continous_fetch_adsb = (): void => {
     if (this._interval !== 0) clearInterval(this._interval);
 
     setInterval(() => {
@@ -19,7 +19,7 @@ export class ADSBReceiver {
     }, 5000);
   };
 
-  fetch_adsb = async () => {
+  fetch_adsb = async (): Promise<void> => {
     try {
       const response = await fetch(this._adsb_url);
       if (!response.ok)

@@ -7,7 +7,7 @@ const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 const options: ACARSOption = options_getter.options;
 
-const myFormat = printf(({ level, message, label, timestamp, source }) => {
+const acarshub_format = printf(({ level, message, _, timestamp, source }) => {
   return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${source
     .toUpperCase()
     .padEnd(16, " ")}]: ${message}`;
@@ -38,7 +38,11 @@ if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 6) {
 const master_logger = createLogger({
   level: log_level,
   transports: [new transports.Console()],
-  format: combine(label({ label: "ACARS Hub Server" }), timestamp(), myFormat),
+  format: combine(
+    label({ label: "ACARS Hub Server" }),
+    timestamp(),
+    acarshub_format
+  ),
 });
 
 const logger = master_logger.child({ source: "ACARS Hub Server" });
