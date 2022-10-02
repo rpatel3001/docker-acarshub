@@ -7,8 +7,8 @@ const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 const options: ACARSOption = options_getter.options;
 
-const myFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${label
+const myFormat = printf(({ level, message, label, timestamp, source }) => {
+  return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${source
     .toUpperCase()
     .padEnd(16, " ")}]: ${message}`;
 });
@@ -32,11 +32,13 @@ if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 5) {
   }
 }
 
-const logger = createLogger({
+const master_logger = createLogger({
   level: log_level,
   transports: [new transports.Console()],
   format: combine(label({ label: "ACARS Hub Server" }), timestamp(), myFormat),
 });
+
+const logger = master_logger.child({ source: "ACARS Hub Server" });
 
 // Socket setup
 const io = new Server(
@@ -64,7 +66,11 @@ logger.info(options.EnableAcars);
 if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");
   options.AcarsSource.forEach((source) => {
-    const acars_server = new MessageReceiver("acars", source);
+    const acars_server = new MessageReceiver(
+      "acars",
+      source,
+      master_logger.child({ source: "ACARS Receiver" })
+    );
     acars_server.watch_for_messages();
   });
 }
@@ -72,14 +78,21 @@ if (options.EnableAcars) {
 if (options.EnableVdlm) {
   logger.info("Starting VDLM receivers");
   options.VdlmSource.forEach((source) => {
-    const vdlm_server = new MessageReceiver("vdlm", source);
+    const vdlm_server = new MessageReceiver(
+      "vdlm",
+      source,
+      master_logger.child({ source: "VDLM Receiver" })
+    );
     vdlm_server.watch_for_messages();
   });
 }
 
 if (options.EnableAdsb && typeof options.AdsbUrl === "string") {
   logger.info("Starting ADSB receivers");
-  const adsb_receiver = new ADSBReceiver(options.AdsbUrl);
+  const adsb_receiver = new ADSBReceiver(
+    options.AdsbUrl,
+    master_logger.child({ source: "ADSB Receiver" })
+  );
   adsb_receiver.continous_fetch_adsb();
 }
 

@@ -1,9 +1,14 @@
+import { Logger } from "winston";
+
 export class ADSBReceiver {
   private _adsb_url: string;
   private _interval: number;
-  constructor(adsb_url: string) {
+  private _logger: Logger;
+
+  constructor(adsb_url: string, logger: Logger) {
     this._adsb_url = adsb_url;
     this._interval = 0;
+    this._logger = logger;
   }
 
   continous_fetch_adsb = () => {
@@ -20,9 +25,9 @@ export class ADSBReceiver {
       if (!response.ok)
         throw new Error(`unexpected response ${response.statusText}`);
       const data = await response.json();
-      console.log(data);
+      this._logger.debug(JSON.stringify(data));
     } catch (err) {
-      console.error(err);
+      this._logger.error(err);
     }
   };
 }
