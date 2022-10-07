@@ -69,7 +69,6 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-logger.info(options.EnableAcars);
 if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");
   options.AcarsSource.forEach((source) => {
