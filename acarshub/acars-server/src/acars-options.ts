@@ -66,7 +66,14 @@ const commandOptions: ACARSCommandLine = [
   {
     name: "tar1090url",
     type: String,
-    default: undefined,
+    default: "https://globe.adsbexchange.com/?icao=",
+    format_corrector: (value: any): string => {
+      if (!value.endsWith("/")) {
+        value = value + "/";
+      }
+
+      return value + "?icao=";
+    },
     validator: (value: any): boolean => {
       let was_good = true;
       console.log(value.startsWith("http"));
@@ -184,7 +191,6 @@ const output_options: {
 
 commandOptions.forEach((option: CommandLineOption) => {
   const name = option.name;
-  console.log(name, option.validator, options[name]);
   if (option.validator && options.hasOwnProperty(name)) {
     if (!option.validator(options[name])) {
       console.error(`Invalid value for option ${option.name}`);
@@ -203,7 +209,9 @@ commandOptions.forEach((option: CommandLineOption) => {
   if (!options.hasOwnProperty(name)) {
     output_options[getter_name] = option.default;
   } else {
-    output_options[getter_name] = options[name];
+    output_options[getter_name] = option.format_corrector
+      ? option.format_corrector(options[name])
+      : options[name];
   }
 });
 

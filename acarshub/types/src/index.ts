@@ -8,6 +8,7 @@ export interface CommandLineOption {
   multiple?: boolean;
   default: undefined | number | string | boolean;
   validator?: (value: any) => boolean;
+  format_corrector?: (value: any) => any;
 }
 
 export interface ACARSOption {
@@ -15,7 +16,7 @@ export interface ACARSOption {
   DbSaveDays: number;
   DbAlertSaveDays: number;
   IataOverride: string[] | undefined;
-  Tar1090url: string | undefined;
+  Tar1090url: string;
   LogLevel: number;
   EnableAdsb: boolean;
   AdsbUrl: string | undefined;
