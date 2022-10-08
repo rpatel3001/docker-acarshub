@@ -101,27 +101,14 @@ const commandOptions: ACARSCommandLine = [
   },
   { name: "enable-adsb", type: Boolean, default: false },
   {
-    name: "adsb-url",
+    name: "adsb-source",
     type: String,
-    default: undefined,
-    validator: (value: any): boolean => {
-      let was_good = true;
-      if (value.indexOf("http") !== 0 || value.indexOf("https") !== 0) {
-        console.error(
-          "Invalid ADSB URL: " + value + " (must start with http or https)"
-        );
-        was_good = false;
-      }
-
-      if (!value.endsWith("/data/aircraft.json")) {
-        console.error(
-          "Invalid ADSB URL: " + value + " (must end with /data/aircraft.json)"
-        );
-        was_good = false;
-      }
-
-      return was_good;
-    },
+    default: "tar1090",
+  },
+  {
+    name: "adsb-port",
+    type: Number,
+    default: 30047,
   },
   {
     name: "adsb-lat",

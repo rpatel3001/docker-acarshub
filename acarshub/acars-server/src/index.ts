@@ -3,9 +3,11 @@ import { Server, Socket } from "socket.io";
 import { ACARSOption } from "types/src";
 import { MessageReceiver } from "./message-receiver";
 import { ADSBReceiver } from "./adsb-receiver";
+import { AircraftHandler } from "./aircraft-handler";
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 const options: ACARSOption = options_getter.options;
+const aircraft_handler = new AircraftHandler();
 
 const acarshub_format = printf(({ level, message, _, timestamp, source }) => {
   return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${source
@@ -93,10 +95,12 @@ if (options.EnableVdlm) {
   });
 }
 
-if (options.EnableAdsb && typeof options.AdsbUrl === "string") {
+if (options.EnableAdsb && typeof options.AdsbSource === "string") {
   logger.info("Starting ADSB receivers");
   const adsb_receiver = new ADSBReceiver(
-    options.AdsbUrl,
+    options.AdsbSource,
+    options.AdsbPort,
+    aircraft_handler,
     master_logger.child({ source: "ADSB Receiver" })
   );
   adsb_receiver.continous_fetch_adsb();
