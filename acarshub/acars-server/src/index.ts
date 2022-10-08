@@ -6,16 +6,25 @@ import { ADSBReceiver } from "./adsb-receiver";
 import { AircraftHandler } from "./aircraft-handler";
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
-const options: ACARSOption = options_getter.options;
-const aircraft_handler = new AircraftHandler();
 
+let log_level = "info";
 const acarshub_format = printf(({ level, message, _, timestamp, source }) => {
   return `${timestamp} [${level.toUpperCase().padEnd(7, " ")}][${source
     .toUpperCase()
     .padEnd(16, " ")}]: ${message}`;
 });
 
-let log_level = "info";
+const master_logger = createLogger({
+  level: log_level,
+  transports: [new transports.Console()],
+  format: combine(
+    label({ label: "ACARS Hub Server" }),
+    timestamp(),
+    acarshub_format
+  ),
+});
+
+const options: ACARSOption = options_getter.options;
 
 if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 6) {
   switch (options.LogLevel) {
@@ -37,15 +46,7 @@ if (options.LogLevel && options.LogLevel >= 3 && options.LogLevel <= 6) {
   }
 }
 
-const master_logger = createLogger({
-  level: log_level,
-  transports: [new transports.Console()],
-  format: combine(
-    label({ label: "ACARS Hub Server" }),
-    timestamp(),
-    acarshub_format
-  ),
-});
+master_logger.level = log_level;
 
 const logger = master_logger.child({ source: "ACARS Hub Server" });
 
@@ -70,6 +71,10 @@ io.on("connection", (socket: Socket) => {
     console.log("ping from client");
   });
 });
+
+const aircraft_handler = new AircraftHandler(
+  master_logger.child({ source: "Aircraft Handler" })
+);
 
 if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");

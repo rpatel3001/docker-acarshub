@@ -1,6 +1,8 @@
 const commandLineArgs = require("command-line-args");
 import { ACARSCommandLine, CommandLineOption } from "types/src";
 
+// TODO: Add output debugging via Logger
+
 const commandOptions: ACARSCommandLine = [
   {
     name: "db-save-all",

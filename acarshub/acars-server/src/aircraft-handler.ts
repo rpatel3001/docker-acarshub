@@ -1,10 +1,15 @@
 import { ADSBPosition } from "types/src";
 import { Aircraft } from "./aircraft";
+import { Logger } from "winston";
 
 export class AircraftHandler {
   private _aircrafts: Aircraft[] = [];
+  private _logger: Logger;
 
-  constructor() {}
+  constructor(logger: Logger) {
+    setInterval(this.prune_aircrafts, 60000);
+    this._logger = logger;
+  }
 
   process_adsb_position = (adsb_position: ADSBPosition): void => {
     let aircraft = this._aircrafts.find(
@@ -30,9 +35,22 @@ export class AircraftHandler {
       return;
     }
 
-    console.log("creating new aircraft");
-
     aircraft = new Aircraft(adsb_position);
     this._aircrafts.push(aircraft);
+  };
+
+  prune_aircrafts = (): void => {
+    const old = Math.floor(Date.now() / 1000) - 60;
+    const old_acars = Math.floor(Date.now() / 1000) - 15 * 60;
+    this._logger.debug(
+      `Size before pruning aircraft: ${this._aircrafts.length}`
+    );
+    this._aircrafts = this._aircrafts.filter(
+      (a) => a.is_plane_old(old, old_acars) === false
+    );
+
+    this._logger.debug(
+      `Size after pruning aircraft: ${this._aircrafts.length}`
+    );
   };
 }

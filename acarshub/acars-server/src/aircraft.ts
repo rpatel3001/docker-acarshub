@@ -9,6 +9,7 @@ export class Aircraft {
   private _callsign: string | undefined;
   private _uid: string;
   private _last_adsb_position_time: number | undefined;
+  private _last_acars_time: number | undefined;
 
   constructor(adsb: ADSBPosition | undefined) {
     this._uid = uuidv4();
@@ -31,8 +32,11 @@ export class Aircraft {
     )
       return;
 
-    console.log("updating adsb position");
-    if (this._icao_hex !== adsb_position.hex) {
+    // There is a possibility that the aircraft is broadcasting a shit hex.
+    // We will only use the hex if we don't have a hex already
+    // The more correct hex source is going to be ACARS
+
+    if (!this._icao_hex) {
       this._icao_hex = adsb_position.hex;
     }
 
@@ -47,6 +51,19 @@ export class Aircraft {
     this._last_adsb_position_time = adsb_position.now;
     this.adsb_positions.push(adsb_position);
   };
+
+  is_plane_old(old: number, old_acars: number): boolean {
+    // console.log(this.last_adsb_position_time, old);
+    const is_adsb_old = !this._last_adsb_position_time
+      ? true
+      : this._last_adsb_position_time < old;
+
+    const is_acars_old = !this._last_acars_time
+      ? true
+      : this._last_acars_time < old_acars;
+
+    return is_adsb_old && is_acars_old;
+  }
 
   get uid(): string {
     return this._uid;
