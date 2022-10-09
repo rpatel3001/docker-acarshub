@@ -22,7 +22,7 @@ export class ADSBReceiver {
     this._aircraft_handler = aircraft_handler;
   }
 
-  continous_fetch_adsb = (): void => {
+  continous_receive_adsb = (): void => {
     // TODO: Should we recreate the socket every time, or just if the socket doesn't exist?
     let unprocessed = "";
     if (this._client) {
@@ -68,13 +68,13 @@ export class ADSBReceiver {
 
       this._logger.info("Reconnecting to ADSB Receiver");
       this._logger.info("Reconnecting in 15 seconds");
-      setTimeout(this.continous_fetch_adsb, this.increment_reconnect_delay());
+      setTimeout(this.continous_receive_adsb, this.increment_reconnect_delay());
     });
 
     this._client.on("error", (err) => {
       this._logger.error("ADSB Connection error: " + err);
       this._logger.error("Reconnecting in 15 seconds");
-      setTimeout(this.continous_fetch_adsb, this.increment_reconnect_delay());
+      setTimeout(this.continous_receive_adsb, this.increment_reconnect_delay());
     });
   };
 

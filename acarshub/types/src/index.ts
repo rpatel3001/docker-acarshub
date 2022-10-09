@@ -84,6 +84,13 @@ export interface ADSBPosition {
 }
 
 export interface ACARSMessage {
+  app: {
+    name: string;
+    ver: string;
+    proxied: boolean;
+    proxied_by: string;
+    acars_router_version: string;
+  };
   timestamp: number;
   station_id: string;
   toaddr?: string;
@@ -113,25 +120,63 @@ export interface ACARSMessage {
   error?: number | string;
   libacars?: any;
   level?: number;
-  matched?: boolean; // This line and below are custom parameters injected by javascript or from the backend
-  matched_text?: string[];
-  matched_icao?: string[];
-  matched_flight?: string[];
-  matched_tail?: string[];
+}
+
+export interface dumpVDL2Message {
+  vdl2: {
+    app: {
+      name: string;
+      ver: string;
+      proxied: boolean;
+      proxied_by: string;
+      acars_router_version: string;
+    };
+    avlc: {
+      cmd: string;
+      cr: string;
+      dst: {
+        addr: string;
+        type: string;
+      };
+      frame_type: string;
+      pf: boolean;
+      src: {
+        addr: string;
+        status: string;
+        type: string;
+      };
+      rseq: number;
+    };
+    burst_len_octets: number;
+    freq: number;
+    idx: number;
+    freq_skew: number;
+    hdr_bits_fixed: number;
+    noise_level: number;
+    octets_corrected_by_fec: number;
+    sig_level: number;
+    station?: string;
+    t: {
+      sec: number;
+      usec: number;
+    };
+  };
+}
+
+export interface ACARSHubMessage {
   uid: string;
-  decodedText?: any; // no type for typescript acars decoder; so set to any
-  data?: string;
-  message_type: string;
-  msg_time?: number;
-  duplicates?: string;
-  msgno_parts?: string;
-  label_type?: string;
-  toaddr_decoded?: string;
-  toaddr_hex?: string;
-  fromaddr_hex?: string;
-  fromaddr_decoded?: string;
-  icao_url?: string;
+  time: number;
+  station_id?: string;
+  iata_airline?: string; // IATA code. Should be picked up in the message
+  icao_airline?: string; // ICAO code. Will have to be filled in by processor via IATA -> ICAO lookup
+  flight_number?: string;
   icao_hex?: string;
-  decoded_msg?: string;
-  icao_flight?: string;
+  registration?: string;
+  message_text?: string;
+  decoded_message?: string;
+  label?: string;
+  message_numbers?: string[];
+  altitude?: number;
+  destination?: string;
+  origin?: string;
 }

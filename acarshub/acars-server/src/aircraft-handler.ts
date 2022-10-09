@@ -35,7 +35,7 @@ export class AircraftHandler {
       return;
     }
 
-    aircraft = new Aircraft(adsb_position);
+    aircraft = new Aircraft(adsb_position, undefined);
     this._aircrafts.push(aircraft);
   };
 

@@ -108,7 +108,7 @@ if (options.EnableAdsb && typeof options.AdsbSource === "string") {
     aircraft_handler,
     master_logger.child({ source: "ADSB Receiver" })
   );
-  adsb_receiver.continous_fetch_adsb();
+  adsb_receiver.continous_receive_adsb();
 }
 
 logger.info(`Server started with log level ${log_level.toUpperCase()}`);

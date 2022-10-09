@@ -1,9 +1,9 @@
-import { ADSBPosition } from "types/src";
+import { ACARSMessage, ADSBPosition } from "types/src";
 import { v4 as uuidv4 } from "uuid";
 
 export class Aircraft {
   private adsb_positions: ADSBPosition[] = [];
-  private acars_positions: ADSBPosition[] = [];
+  private acars_positions: ACARSMessage[] = [];
   private _icao_hex: string | undefined;
   private _registration: string | undefined;
   private _callsign: string | undefined;
@@ -11,7 +11,7 @@ export class Aircraft {
   private _last_adsb_position_time: number | undefined;
   private _last_acars_time: number | undefined;
 
-  constructor(adsb: ADSBPosition | undefined) {
+  constructor(adsb: ADSBPosition | undefined, acars: ACARSMessage | undefined) {
     this._uid = uuidv4();
 
     if (adsb) {
@@ -20,6 +20,8 @@ export class Aircraft {
       this._callsign = adsb.flight;
       this._last_adsb_position_time = adsb.now;
       this.adsb_positions.push(adsb);
+
+      return;
     }
   }
 
