@@ -24,6 +24,9 @@ export class ADSBReceiver {
 
   continous_fetch_adsb = (): void => {
     // TODO: Should we recreate the socket every time, or just if the socket doesn't exist?
+    //TODO: We need to create a ADSB class to fix certain issues with the data
+    // Such as, flight ends with a space, normalize callsigns, etc
+
     let unprocessed = "";
     if (this._client) {
       this._client.destroy();
@@ -48,12 +51,18 @@ export class ADSBReceiver {
         unprocessed += message;
         if (unprocessed.endsWith("}")) {
           try {
-            this._aircraft_handler.process_adsb_position(
-              JSON.parse(unprocessed)
-            );
-            unprocessed = "";
+            const processed_message = JSON.parse(unprocessed);
+            Object.defineProperty(processed_message, "callsign", {
+              get: function () {
+                return this.flight?.trim();
+              },
+            });
+            this._aircraft_handler.process_adsb_position(processed_message);
           } catch (e) {
             this._logger.error(e);
+            this._logger.info(`Received ADSB message: ${unprocessed}`);
+          } finally {
+            unprocessed = "";
           }
         }
       });
@@ -87,4 +96,12 @@ export class ADSBReceiver {
   reset_reconnect_delay = (): void => {
     this._reconnect_delay = 15000;
   };
+
+  async close(): Promise<void> {
+    if (this._client) {
+      this._logger.info("Closing ADSB connection");
+      this._client.destroy();
+      this._logger.info("Closed ADSB connection");
+    }
+  }
 }

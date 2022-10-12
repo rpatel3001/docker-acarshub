@@ -33,7 +33,7 @@ export interface ADSBPosition {
   now: number;
   hex: string;
   type: string;
-  flight: string;
+  flight?: string;
   alt_baro?: number;
   alt_geom?: number;
   gs?: number;
@@ -81,6 +81,9 @@ export interface ADSBPosition {
   tat?: number;
   t?: string;
   r?: string;
+  // Special handlers added by the processor
+  // These are not part of the original message
+  callsign: string | undefined; // Used to normalize the flight field to have no spaces.
 }
 
 export interface ACARSMessage {
@@ -113,25 +116,67 @@ export interface ACARSMessage {
   error?: number | string;
   libacars?: any;
   level?: number;
-  matched?: boolean; // This line and below are custom parameters injected by javascript or from the backend
-  matched_text?: string[];
-  matched_icao?: string[];
-  matched_flight?: string[];
-  matched_tail?: string[];
-  uid: string;
-  decodedText?: any; // no type for typescript acars decoder; so set to any
-  data?: string;
-  message_type: string;
-  msg_time?: number;
-  duplicates?: string;
-  msgno_parts?: string;
-  label_type?: string;
-  toaddr_decoded?: string;
-  toaddr_hex?: string;
-  fromaddr_hex?: string;
-  fromaddr_decoded?: string;
-  icao_url?: string;
+}
+
+export interface dumpVDL2Message {
+  vdl2: {
+    app: {
+      name: string;
+      ver: string;
+      proxied?: boolean;
+      proxied_by?: string;
+      acars_router_version?: string;
+    };
+    avlc: {
+      cr: string;
+      dst: {
+        addr: string;
+        type: string;
+      };
+      frame_type: string;
+      src: {
+        addr: string;
+        status: string;
+        type: string;
+      };
+      rseq: number;
+      sseq: number;
+      poll: boolean;
+    };
+    acars: {
+      err: boolean;
+      crc_ok: boolean;
+      more: boolean;
+      reg: string; // needs normalization. Leading period
+      mode: number;
+      label: string;
+      blk_id: number;
+      ack: string;
+      flight: string;
+      msg_num: string;
+      msg_num_seq: string;
+      sublabel: string;
+      msg_text: string;
+    };
+    burst_len_octets: number;
+    freq: string;
+    idx: number;
+    freq_skew: number;
+    hdr_bits_fixed: number;
+    noise_level: number;
+    octets_corrected_by_fec: number;
+    sig_level: number;
+    station?: string;
+    t: {
+      sec: number;
+      usec: number;
+    };
+  };
+}
+
+export interface ACARSHubMessage {
+  timestamp: number;
   icao_hex?: string;
-  decoded_msg?: string;
-  icao_flight?: string;
+  callsign?: string;
+  tail?: string;
 }
