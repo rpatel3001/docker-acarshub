@@ -4,7 +4,7 @@ import { ACARSOption } from "types/src";
 import { MessageReceiver } from "./message-receiver";
 import { ADSBReceiver } from "./adsb-receiver";
 import { AircraftHandler } from "./aircraft-handler";
-import { config } from "process";
+
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
 

@@ -51,8 +51,14 @@ export class AircraftHandler {
       if (aircraft) return this._aircraft.get(aircraft);
     }
 
-    if (message.callsign) {
-      const aircraft = this._ids.get(message.callsign);
+    if (message.iata_callsign) {
+      const aircraft = this._ids.get(message.iata_callsign);
+
+      if (aircraft) return this._aircraft.get(aircraft);
+    }
+
+    if (message.icao_callsign) {
+      const aircraft = this._ids.get(message.icao_callsign);
 
       if (aircraft) return this._aircraft.get(aircraft);
     }
@@ -101,8 +107,16 @@ export class AircraftHandler {
         this._ids.set(acars_message.icao_hex, aircraft.uid);
       if (acars_message.tail && !this._ids.has(acars_message.tail))
         this._ids.set(acars_message.tail, aircraft.uid);
-      if (acars_message.callsign && !this._ids.has(acars_message.callsign))
-        this._ids.set(acars_message.callsign, aircraft.uid);
+      if (
+        acars_message.iata_callsign &&
+        !this._ids.has(acars_message.iata_callsign)
+      )
+        this._ids.set(acars_message.iata_callsign, aircraft.uid);
+      if (
+        acars_message.icao_callsign &&
+        !this._ids.has(acars_message.icao_callsign)
+      )
+        this._ids.set(acars_message.icao_callsign, aircraft.uid);
 
       return;
     }
@@ -112,18 +126,26 @@ export class AircraftHandler {
     if (acars_message.icao_hex)
       this._ids.set(acars_message.icao_hex, aircraft.uid);
     if (acars_message.tail) this._ids.set(acars_message.tail, aircraft.uid);
-    if (acars_message.callsign)
-      this._ids.set(acars_message.callsign, aircraft.uid);
+    if (acars_message.iata_callsign)
+      this._ids.set(acars_message.iata_callsign, aircraft.uid);
+    if (acars_message.icao_callsign)
+      this._ids.set(acars_message.icao_callsign, aircraft.uid);
 
     this._aircraft.set(aircraft.uid, aircraft);
   };
 
   prune_aircrafts = (): void => {
-    const old = Math.floor(Date.now() / 1000) - 90;
+    const old = Math.floor(Date.now() / 1000) - 120;
     const old_acars = Math.floor(Date.now() / 1000) - 15 * 60;
     this._logger.debug(
       `Size of aircraft before pruning: ${this._aircraft.size}`
     );
+    let ids = "";
+    this._ids.forEach((value, key) => {
+      ids += `${key} => ${value}\n`;
+    });
+
+    this._logger.debug(`Contents of ID: ${ids}`);
 
     const uuid_to_remove: String[] = [];
     let planes_with_valid_acars: number = 0;

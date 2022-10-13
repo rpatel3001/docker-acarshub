@@ -57,6 +57,12 @@ export class ADSBReceiver {
                 return this.flight?.trim();
               },
             });
+            processed_message.old_hex = processed_message.hex;
+            Object.defineProperty(processed_message, "hex", {
+              get: function () {
+                return this.old_hex?.toUpperCase();
+              },
+            });
             this._aircraft_handler.process_adsb_position(processed_message);
           } catch (e) {
             this._logger.error(e);

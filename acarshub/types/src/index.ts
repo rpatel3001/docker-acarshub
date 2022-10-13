@@ -177,6 +177,16 @@ export interface dumpVDL2Message {
 export interface ACARSHubMessage {
   timestamp: number;
   icao_hex?: string;
-  callsign?: string;
+  iata_callsign?: string;
+  icao_callsign?: string;
   tail?: string;
+}
+
+export interface IATAtoICAO {
+  [key: string]: ICAO;
+}
+
+export interface ICAO {
+  ICAO: string;
+  NAME: string;
 }

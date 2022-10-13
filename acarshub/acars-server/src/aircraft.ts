@@ -32,7 +32,7 @@ export class Aircraft {
     if (acars) {
       this._icao_hex = acars.icao_hex;
       this._registration = acars.tail;
-      this._callsign = acars.callsign;
+      this._callsign = acars.icao_callsign;
       this._last_acars_time = acars.timestamp;
 
       return;
@@ -42,7 +42,8 @@ export class Aircraft {
   update_acars_messages(acars: ACARSHubMessage): void {
     this._last_acars_time = acars.timestamp;
 
-    if (this.callsign !== acars.callsign) this.callsign = acars.callsign;
+    if (this.callsign !== acars.icao_callsign)
+      this.callsign = acars.icao_callsign;
     if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
     if (this.registration !== acars.tail) this.registration = acars.tail;
     this.acars_messages.push(acars);
