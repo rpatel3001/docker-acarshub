@@ -65,6 +65,13 @@ export class AircraftHandler {
 
     if (aircraft) {
       aircraft.update_adsb_position(adsb_position);
+
+      if (adsb_position.hex && !this._ids.has(adsb_position.hex))
+        this._ids.set(adsb_position.hex, aircraft.uid);
+      if (adsb_position.r) this._ids.set(adsb_position.r, aircraft.uid);
+      if (adsb_position.callsign && !this._ids.has(adsb_position.callsign))
+        this._ids.set(adsb_position.callsign, aircraft.uid);
+
       return;
     }
 
@@ -82,10 +89,22 @@ export class AircraftHandler {
     let aircraft = this.find_aircraft_by_acars_message(acars_message);
 
     if (aircraft) {
+      this._logger.debug(
+        `Found aircraft ${aircraft.uid}, total: ${aircraft.acars_messages_count}`
+      );
       aircraft.update_acars_messages(acars_message);
       this._logger.debug(
         `Updated aircraft ${aircraft.uid}, total messages: ${aircraft.acars_messages_count}`
       );
+
+      if (acars_message.icao_hex && !this._ids.has(acars_message.icao_hex))
+        this._ids.set(acars_message.icao_hex, aircraft.uid);
+      if (acars_message.tail && !this._ids.has(acars_message.tail))
+        this._ids.set(acars_message.tail, aircraft.uid);
+      if (acars_message.callsign && !this._ids.has(acars_message.callsign))
+        this._ids.set(acars_message.callsign, aircraft.uid);
+
+      return;
     }
 
     aircraft = new Aircraft(undefined, acars_message);

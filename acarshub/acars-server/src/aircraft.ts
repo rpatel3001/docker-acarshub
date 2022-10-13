@@ -8,14 +8,16 @@ export class Aircraft {
   private _registration: string | undefined;
   private _callsign: string | undefined;
   private _uid: string;
-  private _last_adsb_position_time: number | undefined;
-  private _last_acars_time: number | undefined;
+  private _last_adsb_position_time: number;
+  private _last_acars_time: number;
 
   constructor(
     adsb: ADSBPosition | undefined = undefined,
     acars: ACARSHubMessage | undefined = undefined
   ) {
     this._uid = uuidv4();
+    this._last_adsb_position_time = 0;
+    this._last_acars_time = 0;
 
     if (adsb) {
       this._icao_hex = adsb.hex;
@@ -80,13 +82,11 @@ export class Aircraft {
   }
 
   is_acars_old(old_acars: number): boolean {
-    return !this._last_acars_time ? true : this._last_acars_time < old_acars;
+    return this._last_acars_time < old_acars;
   }
 
   is_adsb_old(old_adsb: number): boolean {
-    return !this._last_adsb_position_time
-      ? true
-      : this._last_adsb_position_time < old_adsb;
+    return this._last_adsb_position_time < old_adsb;
   }
 
   get uid(): string {
@@ -117,11 +117,11 @@ export class Aircraft {
     this._callsign = icao_callsign;
   }
 
-  get last_adsb_position_time(): number | undefined {
+  get last_adsb_position_time(): number {
     return this._last_adsb_position_time;
   }
 
-  set last_adsb_position_time(last_adsb_position_time: number | undefined) {
+  set last_adsb_position_time(last_adsb_position_time: number) {
     this._last_adsb_position_time = last_adsb_position_time;
   }
 

@@ -142,21 +142,21 @@ export interface dumpVDL2Message {
       rseq: number;
       sseq: number;
       poll: boolean;
-    };
-    acars: {
-      err: boolean;
-      crc_ok: boolean;
-      more: boolean;
-      reg: string; // needs normalization. Leading period
-      mode: number;
-      label: string;
-      blk_id: number;
-      ack: string;
-      flight: string;
-      msg_num: string;
-      msg_num_seq: string;
-      sublabel: string;
-      msg_text: string;
+      acars: {
+        err: boolean;
+        crc_ok: boolean;
+        more: boolean;
+        reg: string; // needs normalization. Leading period
+        mode: number;
+        label: string;
+        blk_id: number;
+        ack: string;
+        flight: string;
+        msg_num: string;
+        msg_num_seq: string;
+        sublabel: string;
+        msg_text: string;
+      };
     };
     burst_len_octets: number;
     freq: string;

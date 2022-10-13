@@ -24,20 +24,24 @@ export class MessageReceiver {
   watch_for_messages = async (): Promise<void> => {
     this._sock.connect(`tcp://${this._source_url}`);
     this._sock.subscribe("");
-    this._logger.info(`ZMQ Connection to ${this._source_url} estbalished`);
+    this._logger.info(`ZMQ Connection to ${this._source_url} established`);
 
     for await (const [topic, msg] of this._sock) {
-      this._logger.verbose(
+      this._logger.silly(
         `ZMQ Message on topic ${topic.toString()} containing message: ${msg.toString()}`
       );
       try {
-        this._handler.process_acars_message(JSON.parse(msg.toString()));
+        const decoded_message = decode_acars_message(
+          JSON.parse(msg.toString())
+        );
+        if (decoded_message)
+          this._handler.process_acars_message(decoded_message);
       } catch (e) {
         this._logger.error(`Error processing message: ${e}`);
       }
     }
 
-    this._logger.info("ZMQ Connection to ${this._source_url} closed");
+    this._logger.info(`ZMQ Connection to ${this._source_url} closed`);
   };
 
   close = async (): Promise<void> => {
