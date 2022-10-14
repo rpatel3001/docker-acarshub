@@ -20,7 +20,7 @@ export class ConvertIATAtoICAO {
     } catch (e) {
       console.log(e);
     }
-    console.log(overrides);
+
     if (overrides) {
       overrides.forEach((override) => {
         this._iata[override.iata] = {

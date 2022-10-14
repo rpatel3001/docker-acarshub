@@ -93,6 +93,7 @@ export class ADSBReceiver {
     });
   };
 
+  // TODO: actually increment the counter
   increment_reconnect_delay = (): number => {
     this._reconnect_delay = Math.min(this._reconnect_delay * 2, 60000);
 
