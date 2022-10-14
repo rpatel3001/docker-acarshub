@@ -28,6 +28,7 @@ export interface ACARSOption {
   EnableVdlm: boolean;
   AcarsSource: string[];
   VdlmSource: string[];
+  IataSourcePath: string;
 }
 export interface ADSBPosition {
   now: number;

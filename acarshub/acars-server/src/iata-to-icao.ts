@@ -3,15 +3,13 @@ import { IATAtoICAO, ICAO } from "types/src";
 
 export class ConvertIATAtoICAO {
   private _iata: IATAtoICAO = {};
-  constructor() {
-    this.loadIATA();
+  constructor(file_path: string) {
+    this.loadIATA(file_path);
   }
 
-  private async loadIATA(): Promise<void> {
+  private async loadIATA(file_path: string): Promise<void> {
     try {
-      const data = await readFile(
-        "/Users/fred/Git/acarshub/docker-acarshub/rootfs/webapp/data/airlines.json"
-      ); // TODO: This should be a relative path
+      const data = await readFile(file_path);
       this._iata = JSON.parse(data.toString());
     } catch (e) {
       console.log(e);

@@ -155,6 +155,7 @@ const commandOptions: ACARSCommandLine = [
     multiple: true,
     default: "acars_router",
   },
+  { name: "iata-source-path", type: String, default: "/acars/data/iata.json" },
 ];
 
 const options: { [index: string]: CommandLineOption } =
@@ -188,7 +189,7 @@ commandOptions.forEach((option: CommandLineOption) => {
   }
 
   let getter_name = `${name
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
       return index == 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, "")

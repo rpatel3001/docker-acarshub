@@ -1,24 +1,27 @@
 const zmq = require("zeromq");
 import { Logger } from "winston";
 import { AircraftHandler } from "./aircraft-handler";
-import { decode_acars_message } from "./acars-decoder";
+import { convertACARS } from "./acars-decoder";
 export class MessageReceiver {
   private _message_type: string;
   private _source_url: string;
   private _logger: Logger;
   private _sock = new zmq.Subscriber();
+  private _acars_converter: convertACARS;
   private _handler;
 
   constructor(
     message_type: string,
     source_url: string,
     handler: AircraftHandler,
+    acars_converter: convertACARS,
     logger: Logger
   ) {
     this._message_type = message_type;
     this._source_url = source_url;
     this._logger = logger;
     this._handler = handler;
+    this._acars_converter = acars_converter;
   }
 
   watch_for_messages = async (): Promise<void> => {
@@ -31,7 +34,7 @@ export class MessageReceiver {
         `ZMQ Message on topic ${topic.toString()} containing message: ${msg.toString()}`
       );
       try {
-        const decoded_message = decode_acars_message(
+        const decoded_message = this._acars_converter.decode_acars_message(
           JSON.parse(msg.toString())
         );
         if (decoded_message)

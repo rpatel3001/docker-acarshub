@@ -4,6 +4,7 @@ import { ACARSOption } from "types/src";
 import { MessageReceiver } from "./message-receiver";
 import { ADSBReceiver } from "./adsb-receiver";
 import { AircraftHandler } from "./aircraft-handler";
+import { convertACARS } from "./acars-decoder";
 
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
@@ -80,6 +81,8 @@ const aircraft_handler = new AircraftHandler(
   master_logger.child({ source: "Aircraft Handler" })
 );
 
+const acars_converter = new convertACARS(options.IataSourcePath);
+
 if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");
   options.AcarsSource.forEach((source) => {
@@ -87,6 +90,7 @@ if (options.EnableAcars) {
       "acars",
       source,
       aircraft_handler,
+      acars_converter,
       master_logger.child({ source: "ACARS Receiver" })
     );
     acars_server.watch_for_messages();
@@ -101,6 +105,7 @@ if (options.EnableVdlm) {
       "vdlm",
       source,
       aircraft_handler,
+      acars_converter,
       master_logger.child({ source: "VDLM Receiver" })
     );
     vdlm_server.watch_for_messages();
