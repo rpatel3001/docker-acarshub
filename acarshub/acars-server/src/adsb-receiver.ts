@@ -54,13 +54,19 @@ export class ADSBReceiver {
             const processed_message = JSON.parse(unprocessed);
             Object.defineProperty(processed_message, "callsign", {
               get: function () {
-                return this.flight?.trim();
+                return this.flight?.trim().replace(/[~\.]/g, "");
               },
             });
             processed_message.old_hex = processed_message.hex;
             Object.defineProperty(processed_message, "hex", {
               get: function () {
-                return this.old_hex?.toUpperCase();
+                return this.old_hex?.toUpperCase().replace(/[~\.]/g, "");
+              },
+            });
+            processed_message.old_r = processed_message.r;
+            Object.defineProperty(processed_message, "r", {
+              get: function () {
+                return this.old_r?.toUpperCase().replace(/[~\.]/g, "");
               },
             });
             this._aircraft_handler.process_adsb_position(processed_message);
