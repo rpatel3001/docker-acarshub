@@ -60,6 +60,8 @@ export class ADSBReceiver {
             processed_message.old_hex = processed_message.hex;
             Object.defineProperty(processed_message, "hex", {
               get: function () {
+                if (this.old_hex?.startsWith("~")) return undefined;
+
                 return this.old_hex?.toUpperCase().replace(/[~\.]/g, "");
               },
             });

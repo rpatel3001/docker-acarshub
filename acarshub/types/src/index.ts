@@ -32,7 +32,7 @@ export interface ACARSOption {
 }
 export interface ADSBPosition {
   now: number;
-  hex: string;
+  hex?: string;
   type: string;
   flight?: string;
   alt_baro?: number;
