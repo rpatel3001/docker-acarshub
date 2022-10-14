@@ -1,13 +1,15 @@
-import { ACARSHubMessage, ACARSMessage, dumpVDL2Message } from "types/src";
+import {
+  ACARSHubMessage,
+  ACARSMessage,
+  dumpVDL2Message,
+  ICAOOverride,
+} from "types/src";
 import { ConvertIATAtoICAO } from "./iata-to-icao";
 
 export class convertACARS {
   private _iata_to_icao;
 
-  constructor(
-    iata_file_path: string,
-    iata_overrides: { name: string; iata: string; icao: string }[]
-  ) {
+  constructor(iata_file_path: string, iata_overrides: ICAOOverride) {
     this._iata_to_icao = new ConvertIATAtoICAO(iata_file_path, iata_overrides);
   }
 

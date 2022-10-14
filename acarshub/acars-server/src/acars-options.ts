@@ -1,5 +1,10 @@
 const commandLineArgs = require("command-line-args");
-import { ACARSCommandLine, CommandLineOption } from "types/src";
+import {
+  ACARSCommandLine,
+  CommandLineOption,
+  ICAOInput,
+  ICAOOverride,
+} from "types/src";
 
 // TODO: Add output debugging via Logger
 
@@ -26,13 +31,15 @@ const commandOptions: ACARSCommandLine = [
     type: String,
     multiple: true,
     default: undefined,
-    format_corrector: (
-      value
-    ): { name: string; iata: string; icao: string }[] => {
-      const output: { name: string; iata: string; icao: string }[] = [];
+    format_corrector: (value): ICAOOverride => {
+      const output: ICAOOverride = [];
       value.forEach((v: string) => {
         const split = v.split("|");
-        output.push({ name: split[2], iata: split[0], icao: split[1] });
+        output.push({
+          name: split[2],
+          iata: split[0],
+          icao: split[1],
+        } as ICAOInput);
       });
 
       return output;

@@ -15,7 +15,7 @@ export interface ACARSOption {
   DbSaveAll: boolean;
   DbSaveDays: number;
   DbAlertSaveDays: number;
-  IataOverride: { name: string; iata: string; icao: string }[];
+  IataOverride: ICAOOverride;
   Tar1090url: string;
   LogLevel: number;
   EnableAdsb: boolean;
@@ -190,4 +190,14 @@ export interface IATAtoICAO {
 export interface ICAO {
   ICAO: string;
   NAME: string;
+}
+
+export interface ICAOOverride extends Array<ICAOInput> {
+  [index: number]: ICAOInput;
+}
+
+export interface ICAOInput {
+  name: string;
+  iata: string;
+  icao: string;
 }

@@ -1,18 +1,15 @@
 import { readFile } from "fs/promises";
-import { IATAtoICAO, ICAO } from "types/src";
+import { IATAtoICAO, ICAO, ICAOOverride } from "types/src";
 
 export class ConvertIATAtoICAO {
   private _iata: IATAtoICAO = {};
-  constructor(
-    file_path: string,
-    overrides: { name: string; iata: string; icao: string }[]
-  ) {
+  constructor(file_path: string, overrides: ICAOOverride) {
     this.loadIATA(file_path, overrides);
   }
 
   private async loadIATA(
     file_path: string,
-    overrides: { name: string; iata: string; icao: string }[] | undefined
+    overrides: ICAOOverride | undefined
   ): Promise<void> {
     try {
       const data = await readFile(file_path);
