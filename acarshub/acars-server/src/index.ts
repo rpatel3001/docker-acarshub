@@ -81,7 +81,10 @@ const aircraft_handler = new AircraftHandler(
   master_logger.child({ source: "Aircraft Handler" })
 );
 
-const acars_converter = new convertACARS(options.IataSourcePath);
+const acars_converter = new convertACARS(
+  options.IataSourcePath,
+  options.IataOverride
+);
 
 if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");

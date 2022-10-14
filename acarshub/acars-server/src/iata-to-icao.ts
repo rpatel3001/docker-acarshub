@@ -3,16 +3,31 @@ import { IATAtoICAO, ICAO } from "types/src";
 
 export class ConvertIATAtoICAO {
   private _iata: IATAtoICAO = {};
-  constructor(file_path: string) {
-    this.loadIATA(file_path);
+  constructor(
+    file_path: string,
+    overrides: { name: string; iata: string; icao: string }[]
+  ) {
+    this.loadIATA(file_path, overrides);
   }
 
-  private async loadIATA(file_path: string): Promise<void> {
+  private async loadIATA(
+    file_path: string,
+    overrides: { name: string; iata: string; icao: string }[] | undefined
+  ): Promise<void> {
     try {
       const data = await readFile(file_path);
       this._iata = JSON.parse(data.toString());
     } catch (e) {
       console.log(e);
+    }
+    console.log(overrides);
+    if (overrides) {
+      overrides.forEach((override) => {
+        this._iata[override.iata] = {
+          ICAO: override.icao,
+          NAME: override.name,
+        };
+      });
     }
   }
 

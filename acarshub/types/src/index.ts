@@ -15,7 +15,7 @@ export interface ACARSOption {
   DbSaveAll: boolean;
   DbSaveDays: number;
   DbAlertSaveDays: number;
-  IataOverride: string[] | undefined;
+  IataOverride: { name: string; iata: string; icao: string }[];
   Tar1090url: string;
   LogLevel: number;
   EnableAdsb: boolean;

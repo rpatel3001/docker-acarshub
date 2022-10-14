@@ -26,6 +26,17 @@ const commandOptions: ACARSCommandLine = [
     type: String,
     multiple: true,
     default: undefined,
+    format_corrector: (
+      value
+    ): { name: string; iata: string; icao: string }[] => {
+      const output: { name: string; iata: string; icao: string }[] = [];
+      value.forEach((v: string) => {
+        const split = v.split("|");
+        output.push({ name: split[2], iata: split[0], icao: split[1] });
+      });
+
+      return output;
+    },
     validator: (value: any): boolean => {
       let was_good = true;
       value.forEach((v: string) => {

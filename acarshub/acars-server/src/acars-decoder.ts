@@ -4,8 +4,11 @@ import { ConvertIATAtoICAO } from "./iata-to-icao";
 export class convertACARS {
   private _iata_to_icao;
 
-  constructor(iata_file_path: string) {
-    this._iata_to_icao = new ConvertIATAtoICAO(iata_file_path);
+  constructor(
+    iata_file_path: string,
+    iata_overrides: { name: string; iata: string; icao: string }[]
+  ) {
+    this._iata_to_icao = new ConvertIATAtoICAO(iata_file_path, iata_overrides);
   }
 
   decode_acars_message = (
