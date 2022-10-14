@@ -2,8 +2,8 @@ import { ACARSHubMessage, ADSBPosition } from "types/src";
 import { v4 as uuidv4 } from "uuid";
 
 export class Aircraft {
-  private adsb_positions: ADSBPosition[] = [];
-  private acars_messages: ACARSHubMessage[] = [];
+  private _adsb_positions: ADSBPosition[] = [];
+  private _acars_messages: ACARSHubMessage[] = [];
   private _icao_hex: string | undefined;
   private _registration: string | undefined;
   private _callsign: string | undefined;
@@ -24,7 +24,7 @@ export class Aircraft {
       this._registration = adsb.r;
       this._callsign = adsb.callsign;
       this._last_adsb_position_time = adsb.now;
-      this.adsb_positions.push(adsb);
+      this._adsb_positions.push(adsb);
 
       return;
     }
@@ -46,7 +46,7 @@ export class Aircraft {
       this.callsign = acars.icao_callsign;
     if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
     if (this.registration !== acars.tail) this.registration = acars.tail;
-    this.acars_messages.push(acars);
+    this._acars_messages.push(acars);
   }
 
   update_adsb_position = (adsb_position: ADSBPosition): void => {
@@ -75,7 +75,7 @@ export class Aircraft {
     }
 
     this._last_adsb_position_time = adsb_position.now;
-    this.adsb_positions.push(adsb_position);
+    this._adsb_positions.push(adsb_position);
   };
 
   is_plane_old(old_adsb: number, old_acars: number): boolean {
@@ -127,6 +127,6 @@ export class Aircraft {
   }
 
   get acars_messages_count(): number {
-    return this.acars_messages.length;
+    return this._acars_messages.length;
   }
 }
