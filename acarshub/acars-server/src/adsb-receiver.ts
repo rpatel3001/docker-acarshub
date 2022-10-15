@@ -10,6 +10,10 @@ export class ADSBReceiver {
   private _reconnect_delay = 15000;
   private _aircraft_handler: AircraftHandler;
 
+  private _total_positions: number = 0;
+  private _total_positions_since_last_update: number = 0;
+  private _interval;
+
   constructor(
     adsb_source: string,
     port: number,
@@ -20,6 +24,7 @@ export class ADSBReceiver {
     this._adsb_port = port;
     this._logger = logger;
     this._aircraft_handler = aircraft_handler;
+    this._interval = setInterval(() => this.print_stats(), 5 * 60000);
   }
 
   continous_receive_adsb = (): void => {
@@ -84,6 +89,7 @@ export class ADSBReceiver {
               },
             });
             this._aircraft_handler.process_adsb_position(processed_message);
+            this.increment_counter();
           } catch (e) {
             this._logger.error(e);
             this._logger.info(`Received ADSB message: ${unprocessed}`);
@@ -130,5 +136,21 @@ export class ADSBReceiver {
       this._client.destroy();
       this._logger.info("Closed ADSB connection");
     }
+    clearInterval(this._interval);
   }
+
+  print_stats = (): void => {
+    this._logger.info(
+      `Total ADSB positions for ${this._adsb_source}: ${this._total_positions}`
+    );
+    this._logger.info(
+      `Total ADSB positions for ${this._adsb_source} in the last five minutes: ${this._total_positions_since_last_update}`
+    );
+    this._total_positions_since_last_update = 0;
+  };
+
+  increment_counter = (): void => {
+    this._total_positions += 1;
+    this._total_positions_since_last_update += 1;
+  };
 }
