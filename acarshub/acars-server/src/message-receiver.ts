@@ -60,6 +60,7 @@ export class MessageReceiver {
     this._logger.info(`Closing ZMQ Connection to ${this._source_url}`);
     this._sock.disconnect(`tcp://${this._source_url}`);
     this._logger.info(`ZMQ Connection to ${this._source_url} closed`);
+    clearInterval(this._interval);
   };
 
   increment_totals(): void {
