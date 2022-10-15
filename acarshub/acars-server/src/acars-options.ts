@@ -1,5 +1,10 @@
 const commandLineArgs = require("command-line-args");
-import { ACARSCommandLine, CommandLineOption } from "types/src";
+import {
+  ACARSCommandLine,
+  CommandLineOption,
+  ICAOInput,
+  ICAOOverride,
+} from "types/src";
 
 // TODO: Add output debugging via Logger
 
@@ -26,6 +31,19 @@ const commandOptions: ACARSCommandLine = [
     type: String,
     multiple: true,
     default: undefined,
+    format_corrector: (value): ICAOOverride => {
+      const output: ICAOOverride = [];
+      value.forEach((v: string) => {
+        const split = v.split("|");
+        output.push({
+          name: split[2],
+          iata: split[0],
+          icao: split[1],
+        } as ICAOInput);
+      });
+
+      return output;
+    },
     validator: (value: any): boolean => {
       let was_good = true;
       value.forEach((v: string) => {
@@ -155,6 +173,7 @@ const commandOptions: ACARSCommandLine = [
     multiple: true,
     default: "acars_router",
   },
+  { name: "iata-source-path", type: String, default: "/acars/data/iata.json" },
 ];
 
 const options: { [index: string]: CommandLineOption } =
@@ -188,7 +207,7 @@ commandOptions.forEach((option: CommandLineOption) => {
   }
 
   let getter_name = `${name
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
       return index == 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, "")

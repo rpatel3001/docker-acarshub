@@ -15,7 +15,7 @@ export interface ACARSOption {
   DbSaveAll: boolean;
   DbSaveDays: number;
   DbAlertSaveDays: number;
-  IataOverride: string[] | undefined;
+  IataOverride: ICAOOverride;
   Tar1090url: string;
   LogLevel: number;
   EnableAdsb: boolean;
@@ -28,12 +28,13 @@ export interface ACARSOption {
   EnableVdlm: boolean;
   AcarsSource: string[];
   VdlmSource: string[];
+  IataSourcePath: string;
 }
 export interface ADSBPosition {
   now: number;
-  hex: string;
+  hex?: string;
   type: string;
-  flight: string;
+  flight?: string;
   alt_baro?: number;
   alt_geom?: number;
   gs?: number;
@@ -81,16 +82,12 @@ export interface ADSBPosition {
   tat?: number;
   t?: string;
   r?: string;
+  // Special handlers added by the processor
+  // These are not part of the original message
+  callsign: string | undefined; // Used to normalize the flight field to have no spaces.
 }
 
 export interface ACARSMessage {
-  app: {
-    name: string;
-    ver: string;
-    proxied: boolean;
-    proxied_by: string;
-    acars_router_version: string;
-  };
   timestamp: number;
   station_id: string;
   toaddr?: string;
@@ -127,28 +124,43 @@ export interface dumpVDL2Message {
     app: {
       name: string;
       ver: string;
-      proxied: boolean;
-      proxied_by: string;
-      acars_router_version: string;
+      proxied?: boolean;
+      proxied_by?: string;
+      acars_router_version?: string;
     };
     avlc: {
-      cmd: string;
       cr: string;
       dst: {
         addr: string;
         type: string;
       };
       frame_type: string;
-      pf: boolean;
       src: {
         addr: string;
         status: string;
         type: string;
       };
       rseq: number;
+      sseq: number;
+      poll: boolean;
+      acars: {
+        err: boolean;
+        crc_ok: boolean;
+        more: boolean;
+        reg: string; // needs normalization. Leading period
+        mode: number;
+        label: string;
+        blk_id: number;
+        ack: string;
+        flight: string;
+        msg_num: string;
+        msg_num_seq: string;
+        sublabel: string;
+        msg_text: string;
+      };
     };
     burst_len_octets: number;
-    freq: number;
+    freq: string;
     idx: number;
     freq_skew: number;
     hdr_bits_fixed: number;
@@ -164,19 +176,28 @@ export interface dumpVDL2Message {
 }
 
 export interface ACARSHubMessage {
-  uid: string;
-  time: number;
-  station_id?: string;
-  iata_airline?: string; // IATA code. Should be picked up in the message
-  icao_airline?: string; // ICAO code. Will have to be filled in by processor via IATA -> ICAO lookup
-  flight_number?: string;
+  timestamp: number;
   icao_hex?: string;
-  registration?: string;
-  message_text?: string;
-  decoded_message?: string;
-  label?: string;
-  message_numbers?: string[];
-  altitude?: number;
-  destination?: string;
-  origin?: string;
+  iata_callsign?: string;
+  icao_callsign?: string;
+  tail?: string;
+}
+
+export interface IATAtoICAO {
+  [key: string]: ICAO;
+}
+
+export interface ICAO {
+  ICAO: string;
+  NAME: string;
+}
+
+export interface ICAOOverride extends Array<ICAOInput> {
+  [index: number]: ICAOInput;
+}
+
+export interface ICAOInput {
+  name: string;
+  iata: string;
+  icao: string;
 }

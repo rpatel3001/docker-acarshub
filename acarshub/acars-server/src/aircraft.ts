@@ -1,28 +1,52 @@
-import { ACARSMessage, ADSBPosition } from "types/src";
+import { ACARSHubMessage, ADSBPosition } from "types/src";
 import { v4 as uuidv4 } from "uuid";
 
 export class Aircraft {
-  private adsb_positions: ADSBPosition[] = [];
-  private acars_positions: ACARSMessage[] = [];
+  private _adsb_positions: ADSBPosition[] = [];
+  private _acars_messages: ACARSHubMessage[] = [];
   private _icao_hex: string | undefined;
   private _registration: string | undefined;
   private _callsign: string | undefined;
   private _uid: string;
-  private _last_adsb_position_time: number | undefined;
-  private _last_acars_time: number | undefined;
+  private _last_adsb_position_time: number;
+  private _last_acars_time: number;
 
-  constructor(adsb: ADSBPosition | undefined, acars: ACARSMessage | undefined) {
+  constructor(
+    adsb: ADSBPosition | undefined = undefined,
+    acars: ACARSHubMessage | undefined = undefined
+  ) {
     this._uid = uuidv4();
+    this._last_adsb_position_time = 0;
+    this._last_acars_time = 0;
 
     if (adsb) {
       this._icao_hex = adsb.hex;
       this._registration = adsb.r;
-      this._callsign = adsb.flight;
+      this._callsign = adsb.callsign;
       this._last_adsb_position_time = adsb.now;
-      this.adsb_positions.push(adsb);
+      this._adsb_positions.push(adsb);
 
       return;
     }
+
+    if (acars) {
+      this._icao_hex = acars.icao_hex;
+      this._registration = acars.tail;
+      this._callsign = acars.icao_callsign;
+      this._last_acars_time = acars.timestamp;
+
+      return;
+    }
+  }
+
+  update_acars_messages(acars: ACARSHubMessage): void {
+    this._last_acars_time = acars.timestamp;
+
+    if (this.callsign !== acars.icao_callsign)
+      this.callsign = acars.icao_callsign;
+    if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
+    if (this.registration !== acars.tail) this.registration = acars.tail;
+    this._acars_messages.push(acars);
   }
 
   update_adsb_position = (adsb_position: ADSBPosition): void => {
@@ -46,25 +70,24 @@ export class Aircraft {
       this._registration = adsb_position.r;
     }
 
-    if (this._callsign !== adsb_position.flight) {
-      this._callsign = adsb_position.flight;
+    if (this._callsign !== adsb_position.callsign) {
+      this._callsign = adsb_position.callsign;
     }
 
     this._last_adsb_position_time = adsb_position.now;
-    this.adsb_positions.push(adsb_position);
+    this._adsb_positions.push(adsb_position);
   };
 
-  is_plane_old(old: number, old_acars: number): boolean {
-    // console.log(this.last_adsb_position_time, old);
-    const is_adsb_old = !this._last_adsb_position_time
-      ? true
-      : this._last_adsb_position_time < old;
+  is_plane_old(old_adsb: number, old_acars: number): boolean {
+    return this.is_adsb_old(old_adsb) && this.is_acars_old(old_acars);
+  }
 
-    const is_acars_old = !this._last_acars_time
-      ? true
-      : this._last_acars_time < old_acars;
+  is_acars_old(old_acars: number): boolean {
+    return this._last_acars_time < old_acars;
+  }
 
-    return is_adsb_old && is_acars_old;
+  is_adsb_old(old_adsb: number): boolean {
+    return this._last_adsb_position_time < old_adsb;
   }
 
   get uid(): string {
@@ -95,11 +118,15 @@ export class Aircraft {
     this._callsign = icao_callsign;
   }
 
-  get last_adsb_position_time(): number | undefined {
+  get last_adsb_position_time(): number {
     return this._last_adsb_position_time;
   }
 
-  set last_adsb_position_time(last_adsb_position_time: number | undefined) {
+  set last_adsb_position_time(last_adsb_position_time: number) {
     this._last_adsb_position_time = last_adsb_position_time;
+  }
+
+  get acars_messages_count(): number {
+    return this._acars_messages.length;
   }
 }
