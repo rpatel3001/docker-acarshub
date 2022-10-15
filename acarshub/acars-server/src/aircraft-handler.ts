@@ -33,12 +33,28 @@ export class AircraftHandler {
       if (aircraft) return this._aircraft.get(aircraft);
     }
 
+    if (adsb_position.callsign_normalized) {
+      const aircraft = this._ids.get(adsb_position.callsign_normalized);
+
+      if (aircraft) return this._aircraft.get(aircraft);
+    }
+
     return undefined;
   };
 
   find_aircraft_by_acars_message = (
     message: ACARSHubMessage
   ): Aircraft | undefined => {
+    if (message.label === "SQ" && message.message_text) {
+      const aircraft = this._ids.get(message.message_text);
+      this._logger.debug(
+        `Matched SQ: ${message.message_text}, Found plane: ${
+          aircraft !== undefined
+        }`
+      );
+      return aircraft ? this._aircraft.get(aircraft) : undefined;
+    }
+
     if (message.icao_hex) {
       const aircraft = this._ids.get(message.icao_hex);
 
@@ -63,6 +79,18 @@ export class AircraftHandler {
       if (aircraft) return this._aircraft.get(aircraft);
     }
 
+    if (message.icao_callsign_normalized) {
+      const aircraft = this._ids.get(message.icao_callsign_normalized);
+
+      if (aircraft) return this._aircraft.get(aircraft);
+    }
+
+    if (message.iata_callsign_normalized) {
+      const aircraft = this._ids.get(message.iata_callsign_normalized);
+
+      if (aircraft) return this._aircraft.get(aircraft);
+    }
+
     return undefined;
   };
 
@@ -77,6 +105,11 @@ export class AircraftHandler {
       if (adsb_position.r) this._ids.set(adsb_position.r, aircraft.uid);
       if (adsb_position.callsign && !this._ids.has(adsb_position.callsign))
         this._ids.set(adsb_position.callsign, aircraft.uid);
+      if (
+        adsb_position.callsign_normalized &&
+        !this._ids.has(adsb_position.callsign_normalized)
+      )
+        this._ids.set(adsb_position.callsign_normalized, aircraft.uid);
 
       return;
     }
@@ -95,11 +128,11 @@ export class AircraftHandler {
     let aircraft = this.find_aircraft_by_acars_message(acars_message);
 
     if (aircraft) {
-      this._logger.debug(
+      this._logger.silly(
         `Found aircraft ${aircraft.uid}, total: ${aircraft.acars_messages_count}`
       );
       aircraft.update_acars_messages(acars_message);
-      this._logger.debug(
+      this._logger.silly(
         `Updated aircraft ${aircraft.uid}, total messages: ${aircraft.acars_messages_count}`
       );
 
@@ -118,6 +151,17 @@ export class AircraftHandler {
       )
         this._ids.set(acars_message.icao_callsign, aircraft.uid);
 
+      if (
+        acars_message.icao_callsign_normalized &&
+        !this._ids.has(acars_message.icao_callsign_normalized)
+      )
+        this._ids.set(acars_message.icao_callsign_normalized, aircraft.uid);
+      if (
+        acars_message.iata_callsign_normalized &&
+        !this._ids.has(acars_message.iata_callsign_normalized)
+      )
+        this._ids.set(acars_message.iata_callsign_normalized, aircraft.uid);
+
       return;
     }
 
@@ -130,6 +174,10 @@ export class AircraftHandler {
       this._ids.set(acars_message.iata_callsign, aircraft.uid);
     if (acars_message.icao_callsign)
       this._ids.set(acars_message.icao_callsign, aircraft.uid);
+    if (aircraft.is_squitter && aircraft.squitter_id) {
+      this._logger.debug(`Adding squitter: ${aircraft.squitter_id}`);
+      this._ids.set(aircraft.squitter_id, aircraft.uid);
+    }
 
     this._aircraft.set(aircraft.uid, aircraft);
   };
@@ -145,18 +193,24 @@ export class AircraftHandler {
       ids += `${key} => ${value}\n`;
     });
 
-    this._logger.debug(`Contents of ID: ${ids}`);
+    this._logger.silly(`Contents of ID: ${ids}`);
 
     const uuid_to_remove: String[] = [];
     let planes_with_valid_acars: number = 0;
     let planes_with_valid_adsb: number = 0;
     let planes_with_both: number = 0;
+    let planes_with_just_acars: number = 0;
+    let planes_with_just_adsb: number = 0;
 
     this._aircraft.forEach((aircraft, key) => {
       if (!aircraft.is_adsb_old(old)) planes_with_valid_adsb++;
       if (!aircraft.is_acars_old(old_acars)) planes_with_valid_acars++;
       if (!aircraft.is_adsb_old(old) && !aircraft.is_acars_old(old_acars))
         planes_with_both++;
+      if (aircraft.is_adsb_old(old) && !aircraft.is_acars_old(old_acars))
+        planes_with_just_acars++;
+      if (!aircraft.is_adsb_old(old) && aircraft.is_acars_old(old_acars))
+        planes_with_just_adsb++;
 
       if (aircraft.is_plane_old(old, old_acars)) {
         uuid_to_remove.push(key);
@@ -176,5 +230,7 @@ export class AircraftHandler {
     this._logger.debug(`Planes with valid ADSB: ${planes_with_valid_adsb}`);
     this._logger.debug(`Planes with valid ACARS: ${planes_with_valid_acars}`);
     this._logger.debug(`Planes with both: ${planes_with_both}`);
+    this._logger.debug(`Planes with just ADSB: ${planes_with_just_adsb}`);
+    this._logger.debug(`Planes with just ACARS: ${planes_with_just_acars}`);
   };
 }

@@ -46,8 +46,12 @@ export class convertACARS {
       ),
       icao_hex: icao_hex,
       iata_callsign: callsign,
+      iata_callsign_normalized: this.normalize_callsign(callsign),
       icao_callsign: icao_callsign,
+      icao_callsign_normalized: this.normalize_callsign(icao_callsign),
       tail: tail,
+      label: message.vdl2.avlc.acars?.label,
+      message_text: message.vdl2.avlc.acars?.msg_text,
     } as ACARSHubMessage;
   };
 
@@ -56,10 +60,27 @@ export class convertACARS {
       timestamp: message.timestamp,
       icao_hex: message.icao?.toString(16),
       iata_callsign: message.flight,
+      iata_callsign_normalized: this.normalize_callsign(message.flight),
       icao_callsign: message.flight
         ? this._iata_to_icao.getICAO(message.flight)
         : undefined,
+      icao_callsign_normalized: message.flight
+        ? this.normalize_callsign(this._iata_to_icao.getICAO(message.flight))
+        : undefined,
       tail: message.tail,
+      label: message.label,
+      message_text: message.text,
     } as ACARSHubMessage;
   };
+
+  normalize_callsign(callsign: string | undefined): string | undefined {
+    if (!callsign) return undefined;
+    const index_of_first_number = callsign!.search(/[0-9]/);
+    if (index_of_first_number === -1) return undefined;
+
+    return (
+      callsign!.substring(0, index_of_first_number) +
+      Number(callsign!.substring(index_of_first_number))
+    );
+  }
 }

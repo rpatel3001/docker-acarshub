@@ -85,6 +85,7 @@ export interface ADSBPosition {
   // Special handlers added by the processor
   // These are not part of the original message
   callsign: string | undefined; // Used to normalize the flight field to have no spaces.
+  callsign_normalized: string | undefined; // Used to normalize the flight field to have no leading zeros
 }
 
 export interface ACARSMessage {
@@ -179,8 +180,12 @@ export interface ACARSHubMessage {
   timestamp: number;
   icao_hex?: string;
   iata_callsign?: string;
+  iata_callsign_normalized?: string;
   icao_callsign?: string;
+  icao_callsign_normalized?: string;
   tail?: string;
+  message_text?: string;
+  label?: string;
 }
 
 export interface IATAtoICAO {

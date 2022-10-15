@@ -7,9 +7,13 @@ export class Aircraft {
   private _icao_hex: string | undefined;
   private _registration: string | undefined;
   private _callsign: string | undefined;
+  private _icao_callsign_normalized: string | undefined;
+  private _iata_callsign_normalized: string | undefined;
   private _uid: string;
   private _last_adsb_position_time: number;
   private _last_acars_time: number;
+  private _is_squitter = false;
+  private _squitter_id: string | undefined = undefined;
 
   constructor(
     adsb: ADSBPosition | undefined = undefined,
@@ -25,7 +29,7 @@ export class Aircraft {
       this._callsign = adsb.callsign;
       this._last_adsb_position_time = adsb.now;
       this._adsb_positions.push(adsb);
-
+      this._icao_callsign_normalized = adsb.callsign_normalized;
       return;
     }
 
@@ -34,6 +38,13 @@ export class Aircraft {
       this._registration = acars.tail;
       this._callsign = acars.icao_callsign;
       this._last_acars_time = acars.timestamp;
+      this._iata_callsign_normalized = acars.iata_callsign_normalized;
+      this._icao_callsign_normalized = acars.icao_callsign_normalized;
+
+      if (acars.label === "SQ") {
+        this._is_squitter = true;
+        this._squitter_id = acars.message_text;
+      }
 
       return;
     }
@@ -42,10 +53,20 @@ export class Aircraft {
   update_acars_messages(acars: ACARSHubMessage): void {
     this._last_acars_time = acars.timestamp;
 
+    if (this._is_squitter) {
+      // TODO: process duplication and whatnot
+      return;
+    }
+
     if (this.callsign !== acars.icao_callsign)
       this.callsign = acars.icao_callsign;
     if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
     if (this.registration !== acars.tail) this.registration = acars.tail;
+    if (this._icao_callsign_normalized !== acars.icao_callsign_normalized)
+      this._icao_callsign_normalized = acars.icao_callsign_normalized;
+    if (this._iata_callsign_normalized !== acars.iata_callsign_normalized)
+      this._iata_callsign_normalized = acars.iata_callsign_normalized;
+
     this._acars_messages.push(acars);
   }
 
@@ -114,6 +135,14 @@ export class Aircraft {
     return this._callsign;
   }
 
+  get iata_callsign_normalized(): string | undefined {
+    return this._iata_callsign_normalized;
+  }
+
+  get icao_callsign_normalized(): string | undefined {
+    return this._icao_callsign_normalized;
+  }
+
   set callsign(icao_callsign: string | undefined) {
     this._callsign = icao_callsign;
   }
@@ -128,5 +157,13 @@ export class Aircraft {
 
   get acars_messages_count(): number {
     return this._acars_messages.length;
+  }
+
+  get is_squitter(): boolean | undefined {
+    return this._is_squitter;
+  }
+
+  get squitter_id(): string | undefined {
+    return this._squitter_id;
   }
 }

@@ -57,6 +57,18 @@ export class ADSBReceiver {
                 return this.flight?.trim().replace(/[~\.]/g, "");
               },
             });
+            Object.defineProperty(processed_message, "callsign_normalized", {
+              get: function () {
+                if (!this.callsign) return undefined;
+                const index_of_first_number = this.callsign!.search(/[0-9]/);
+                if (index_of_first_number === -1) return undefined;
+
+                return (
+                  this.callsign!.substring(0, index_of_first_number) +
+                  Number(this.callsign!.substring(index_of_first_number))
+                );
+              },
+            });
             processed_message.old_hex = processed_message.hex;
             Object.defineProperty(processed_message, "hex", {
               get: function () {
