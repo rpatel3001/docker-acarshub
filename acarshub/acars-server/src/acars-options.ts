@@ -165,13 +165,13 @@ const commandOptions: ACARSCommandLine = [
     name: "acars-source",
     type: String,
     multiple: true,
-    default: "acars_router",
+    default: "acars_router:45550",
   },
   {
     name: "vdlm-source",
     type: String,
     multiple: true,
-    default: "acars_router",
+    default: "acars_router:45555",
   },
   { name: "iata-source-path", type: String, default: "/acars/data/iata.json" },
 ];
