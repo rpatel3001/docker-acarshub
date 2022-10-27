@@ -187,6 +187,8 @@ export interface ACARSHubMessage {
   tail?: string;
   text?: string;
   label?: string;
+  message_number?: string;
+  all_message_numbers: [string];
   duplicate: boolean;
   num_duplicates: number;
   decoded_message_text?: ACARSDecodedMessage;

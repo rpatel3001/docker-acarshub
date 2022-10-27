@@ -69,17 +69,62 @@ export class Aircraft {
         this._iata_callsign_normalized = acars.iata_callsign_normalized;
     }
 
-    const index = this.find_message_index(acars);
+    const index = this.find_duplicate_message_index(acars);
 
-    if (index === -1) {
-      acars.decoded_message_text = this.generate_decoded_message(acars);
-      this._acars_messages.push(acars);
-    } else {
+    // Duplicate message found
+    if (index !== -1) {
       //console.log("Duplicate found", this._acars_messages[index], acars);
       this._acars_messages[index].num_duplicates++;
       this._acars_messages[index].duplicate = true;
       this._acars_messages[index].timestamp = acars.timestamp;
+
+      return;
     }
+
+    const sequence_index = this.find_message_sequence_index(acars);
+    // console.log(
+    //   typeof sequence_index,
+    //   sequence_index,
+    //   acars.message_number,
+    //   acars.text
+    // );
+    // Message sequence found
+    if (
+      typeof sequence_index !== "undefined" &&
+      sequence_index !== -1 &&
+      acars.message_number
+    ) {
+      // console.log(
+      //   "Sequence found",
+      //   this._acars_messages[sequence_index],
+      //   acars
+      // );
+      if (
+        this._acars_messages[sequence_index].all_message_numbers?.includes(
+          acars.message_number
+        )
+      ) {
+        // TODO: Update duplicate count
+        console.log("Duplicate message number found");
+        return;
+      }
+
+      this._acars_messages[sequence_index].all_message_numbers.push(
+        acars.message_number
+      );
+      this._acars_messages[sequence_index].timestamp = acars.timestamp;
+
+      if (this._acars_messages[sequence_index].text && acars.text)
+        this._acars_messages[sequence_index].text += acars.text;
+      else if (!this._acars_messages[sequence_index].text && acars.text)
+        this._acars_messages[sequence_index].text = acars.text;
+
+      return;
+    }
+
+    // No duplicate or message sequence found
+    acars.decoded_message_text = this.generate_decoded_message(acars);
+    this._acars_messages.push(acars);
   }
 
   generate_decoded_message(
@@ -91,12 +136,46 @@ export class Aircraft {
       const decoded: ACARSDecodedMessage = this._decoder.decode(acars);
       return decoded.decoded ? decoded : undefined;
     } catch (e) {
-      console.log("Error Decoding message", e);
+      console.log("Error Decoding message", e, acars);
       return undefined;
     }
   }
 
-  find_message_index(acars: ACARSHubMessage): number {
+  find_message_sequence_index(acars_new: ACARSHubMessage): number | undefined {
+    if (!acars_new.message_number) return undefined;
+
+    // console.log(
+    //   "Checking seq",
+    //   acars_new.message_number,
+    //   acars_new.type,
+    //   this._acars_messages.length
+    // );
+
+    return this._acars_messages.findIndex((message) => {
+      // console.log(
+      //   "AzzA pattern",
+      //   message.message_number?.charAt(0) ===
+      //     acars_new.message_number?.charAt(0) &&
+      //     message.message_number?.charAt(3) ===
+      //       acars_new.message_number?.charAt(3)
+      // );
+      // console.log(
+      //   "AAAz pattern",
+      //   message.message_number?.substring(0, 3) ===
+      //     acars_new.message_number?.substring(0, 3)
+      // );
+      return (
+        (message.message_number?.charAt(0) ===
+          acars_new.message_number?.charAt(0) &&
+          message.message_number?.charAt(3) ===
+            acars_new.message_number?.charAt(3)) ||
+        message.message_number?.substring(0, 3) ===
+          acars_new.message_number?.substring(0, 3)
+      );
+    });
+  }
+
+  find_duplicate_message_index(acars: ACARSHubMessage): number {
     return this._acars_messages.findIndex((message) => {
       return message.text === acars.text && message.label === acars.label;
     });
