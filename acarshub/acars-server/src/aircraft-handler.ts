@@ -47,7 +47,7 @@ export class AircraftHandler {
   ): Aircraft | undefined => {
     if (message.label === "SQ" && message.text) {
       const aircraft = this._ids.get(message.text);
-      this._logger.debug(
+      this._logger.silly(
         `Matched SQ: ${message.text}, Found plane: ${aircraft !== undefined}`
       );
       return aircraft ? this._aircraft.get(aircraft) : undefined;
@@ -173,7 +173,7 @@ export class AircraftHandler {
     if (acars_message.icao_callsign)
       this._ids.set(acars_message.icao_callsign, aircraft.uid);
     if (aircraft.is_squitter && aircraft.squitter_id) {
-      this._logger.debug(`Adding squitter: ${aircraft.squitter_id}`);
+      this._logger.silly(`Adding squitter: ${aircraft.squitter_id}`);
       this._ids.set(aircraft.squitter_id, aircraft.uid);
     }
 
