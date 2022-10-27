@@ -8,7 +8,7 @@ export class AircraftHandler {
   private _ids: Map<String, String> = new Map(); // the id, and the plane's uid
 
   constructor(logger: Logger) {
-    setInterval(this.prune_aircrafts, 10000);
+    setInterval(this.prune_aircrafts, 30000);
     this._logger = logger;
   }
 
