@@ -177,6 +177,7 @@ export interface dumpVDL2Message {
 }
 
 export interface ACARSHubMessage {
+  type: "ACARS" | "VDLM2";
   timestamp: number;
   icao_hex?: string;
   iata_callsign?: string;
@@ -184,8 +185,17 @@ export interface ACARSHubMessage {
   icao_callsign?: string;
   icao_callsign_normalized?: string;
   tail?: string;
-  message_text?: string;
+  text?: string;
   label?: string;
+  duplicate: boolean;
+  num_duplicates: number;
+  decoded_message_text?: ACARSDecodedMessage;
+}
+
+export interface ACARSDecodedMessage {
+  decoded: boolean;
+  decodeLevel: string;
+  formatted: string;
 }
 
 export interface IATAtoICAO {

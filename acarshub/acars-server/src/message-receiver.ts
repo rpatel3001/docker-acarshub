@@ -41,7 +41,8 @@ export class MessageReceiver {
       );
       try {
         const decoded_message = this._acars_converter.decode_acars_message(
-          JSON.parse(msg.toString())
+          JSON.parse(msg.toString()),
+          this._message_type
         );
 
         if (decoded_message) {

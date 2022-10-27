@@ -1,5 +1,6 @@
-import { ACARSHubMessage, ADSBPosition } from "types/src";
+import { ACARSDecodedMessage, ACARSHubMessage, ADSBPosition } from "types/src";
 import { v4 as uuidv4 } from "uuid";
+import { MessageDecoder } from "@airframes/acars-decoder/dist/MessageDecoder";
 
 export class Aircraft {
   private _adsb_positions: ADSBPosition[] = [];
@@ -14,6 +15,7 @@ export class Aircraft {
   private _last_acars_time: number;
   private _is_squitter = false;
   private _squitter_id: string | undefined = undefined;
+  private _decoder: MessageDecoder = new MessageDecoder();
 
   constructor(
     adsb: ADSBPosition | undefined = undefined,
@@ -43,8 +45,11 @@ export class Aircraft {
 
       if (acars.label === "SQ") {
         this._is_squitter = true;
-        this._squitter_id = acars.message_text;
+        this._squitter_id = acars.text;
       }
+
+      acars.decoded_message_text = this.generate_decoded_message(acars);
+      this._acars_messages.push(acars);
 
       return;
     }
@@ -53,21 +58,48 @@ export class Aircraft {
   update_acars_messages(acars: ACARSHubMessage): void {
     this._last_acars_time = acars.timestamp;
 
-    if (this._is_squitter) {
-      // TODO: process duplication and whatnot
-      return;
+    if (!this._is_squitter) {
+      if (this.callsign !== acars.icao_callsign)
+        this.callsign = acars.icao_callsign;
+      if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
+      if (this.registration !== acars.tail) this.registration = acars.tail;
+      if (this._icao_callsign_normalized !== acars.icao_callsign_normalized)
+        this._icao_callsign_normalized = acars.icao_callsign_normalized;
+      if (this._iata_callsign_normalized !== acars.iata_callsign_normalized)
+        this._iata_callsign_normalized = acars.iata_callsign_normalized;
     }
 
-    if (this.callsign !== acars.icao_callsign)
-      this.callsign = acars.icao_callsign;
-    if (this.icao_hex !== acars.icao_hex) this.icao_hex = acars.icao_hex;
-    if (this.registration !== acars.tail) this.registration = acars.tail;
-    if (this._icao_callsign_normalized !== acars.icao_callsign_normalized)
-      this._icao_callsign_normalized = acars.icao_callsign_normalized;
-    if (this._iata_callsign_normalized !== acars.iata_callsign_normalized)
-      this._iata_callsign_normalized = acars.iata_callsign_normalized;
+    const index = this.find_message_index(acars);
 
-    this._acars_messages.push(acars);
+    if (index === -1) {
+      acars.decoded_message_text = this.generate_decoded_message(acars);
+      this._acars_messages.push(acars);
+    } else {
+      //console.log("Duplicate found", this._acars_messages[index], acars);
+      this._acars_messages[index].num_duplicates++;
+      this._acars_messages[index].duplicate = true;
+      this._acars_messages[index].timestamp = acars.timestamp;
+    }
+  }
+
+  generate_decoded_message(
+    acars: ACARSHubMessage
+  ): ACARSDecodedMessage | undefined {
+    if (!acars.text) return undefined;
+
+    try {
+      const decoded: ACARSDecodedMessage = this._decoder.decode(acars);
+      return decoded.decoded ? decoded : undefined;
+    } catch (e) {
+      console.log("Error Decoding message", e);
+      return undefined;
+    }
+  }
+
+  find_message_index(acars: ACARSHubMessage): number {
+    return this._acars_messages.findIndex((message) => {
+      return message.text === acars.text && message.label === acars.label;
+    });
   }
 
   update_adsb_position = (adsb_position: ADSBPosition): void => {

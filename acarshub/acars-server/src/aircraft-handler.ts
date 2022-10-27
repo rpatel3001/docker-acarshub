@@ -45,12 +45,10 @@ export class AircraftHandler {
   find_aircraft_by_acars_message = (
     message: ACARSHubMessage
   ): Aircraft | undefined => {
-    if (message.label === "SQ" && message.message_text) {
-      const aircraft = this._ids.get(message.message_text);
+    if (message.label === "SQ" && message.text) {
+      const aircraft = this._ids.get(message.text);
       this._logger.debug(
-        `Matched SQ: ${message.message_text}, Found plane: ${
-          aircraft !== undefined
-        }`
+        `Matched SQ: ${message.text}, Found plane: ${aircraft !== undefined}`
       );
       return aircraft ? this._aircraft.get(aircraft) : undefined;
     }

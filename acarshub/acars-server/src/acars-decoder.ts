@@ -14,10 +14,11 @@ export class convertACARS {
   }
 
   decode_acars_message = (
-    message: ACARSMessage | dumpVDL2Message
+    message: ACARSMessage | dumpVDL2Message,
+    message_type: string
   ): ACARSHubMessage | undefined => {
     if (!message.hasOwnProperty("vdl2")) {
-      return this.process_acars_message(message as ACARSMessage);
+      return this.process_acars_message(message as ACARSMessage, message_type);
     } else {
       return this.process_dumpvdl2_message(message as dumpVDL2Message);
     }
@@ -41,6 +42,7 @@ export class convertACARS {
 
     //   console.log(icao_hex, callsign, tail);
     return {
+      type: "VDLM2",
       timestamp: Number(
         message.vdl2.t.sec.toString() + "." + message.vdl2.t.usec.toString()
       ),
@@ -51,12 +53,18 @@ export class convertACARS {
       icao_callsign_normalized: this.normalize_callsign(icao_callsign),
       tail: tail,
       label: message.vdl2.avlc.acars?.label,
-      message_text: message.vdl2.avlc.acars?.msg_text,
+      text: message.vdl2.avlc.acars?.msg_text,
+      duplicate: false,
+      num_duplicates: 0,
     } as ACARSHubMessage;
   };
 
-  process_acars_message = (message: ACARSMessage): ACARSHubMessage => {
+  process_acars_message = (
+    message: ACARSMessage,
+    message_type: String
+  ): ACARSHubMessage => {
     return {
+      type: message_type,
       timestamp: message.timestamp,
       icao_hex: message.icao?.toString(16),
       iata_callsign: message.flight,
@@ -69,7 +77,9 @@ export class convertACARS {
         : undefined,
       tail: message.tail,
       label: message.label,
-      message_text: message.text,
+      text: message.text,
+      duplicate: false,
+      num_duplicates: 0,
     } as ACARSHubMessage;
   };
 

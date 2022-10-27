@@ -90,7 +90,7 @@ if (options.EnableAcars) {
   logger.info("Starting ACARS receivers");
   options.AcarsSource.forEach((source) => {
     const acars_server = new MessageReceiver(
-      "acars",
+      "ACARS",
       source,
       aircraft_handler,
       acars_converter,
@@ -105,7 +105,7 @@ if (options.EnableVdlm) {
   logger.info("Starting VDLM receivers");
   options.VdlmSource.forEach((source) => {
     const vdlm_server = new MessageReceiver(
-      "vdlm",
+      "VDLM2",
       source,
       aircraft_handler,
       acars_converter,
