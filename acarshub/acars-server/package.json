@@ -17,13 +17,13 @@
     "@airframes/acars-decoder": "^1.4.7",
     "command-line-args": "^5.2.1",
     "net": "^1.0.2",
-    "socket.io": "^4.5.2",
+    "socket.io": "^4.5.4",
     "uuid": "^9.0.0",
     "winston": "^3.8.2",
-    "zeromq": "^6.0.0-beta.6"
+    "zeromq": "^6.0.0-beta.16"
   },
   "devDependencies": {
-    "@types/node": "^18.8.3",
-    "@types/uuid": "^8.3.4"
+    "@types/node": "^18.11.18",
+    "@types/uuid": "^9.0.0"
   }
 }
