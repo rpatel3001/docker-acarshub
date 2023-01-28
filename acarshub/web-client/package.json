@@ -1,0 +1,31 @@
+{
+  "name": "web-client",
+  "version": "4.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "extract-loader": "^5.1.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "ignore-loader": "^0.1.2",
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start-dev": "npm run clean && npm-run-all --parallel watch:*",
+    "start-prod": "npm run clean && npm-run-all --parallel build:*",
+    "watch:ts": "webpack --watch --mode development",
+    "build:ts": "npm run clean && webpack --mode production"
+  },
+  "keywords": [],
+  "author": "Fred Clausen",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4"
+  }
+}

@@ -4,26 +4,26 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-yaml
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
       - id: end-of-file-fixer
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
       - id: trailing-whitespace
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
       - id: requirements-txt-fixer
-        exclude: ^(acarshub-typescript/node_modules/)
+        exclude: ^(node_modules/)
       - id: mixed-line-ending
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
       - id: check-executables-have-shebangs
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/|acarshub-typescript/src)
+        exclude: ^(rootfs/webapp/|node_modules/|src)
       - id: check-shebang-scripts-are-executable
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
 
   # lint the dockerfiles
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.1-beta
     hooks:
       - id: hadolint
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
 
   # lint python formatting
   - repo: https://github.com/psf/black
@@ -47,7 +47,7 @@ repos:
           - prettier@2.5.1
           - "@typescript-eslint/eslint-plugin"
           - "prettier-plugin-sh"
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/|Dockerfile*)
+        exclude: ^(rootfs/webapp/|node_modules/|Dockerfile*)
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v8.32.0
@@ -55,7 +55,7 @@ repos:
       - id: eslint
         files: \.[j]sx?$ # *.js, *.jsx, *.ts and *.tsx
         types: [file]
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/)
+        exclude: ^(rootfs/webapp/|node_modules/)
         additional_dependencies:
           - eslint@8.6.0
           - eslint-config-google@0.7.1
@@ -68,7 +68,7 @@ repos:
     hooks:
       - id: codespell
         types: [text]
-        exclude: ^(rootfs/webapp/|acarshub-typescript/node_modules/|acarshub-typescript/package.json|acarshub-typescript/package-lock.json)
+        exclude: ^(rootfs/webapp/|node_modules/|package.json|acarshub/package-lock.json)
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.2
     hooks:

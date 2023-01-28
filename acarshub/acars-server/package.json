@@ -1,0 +1,29 @@
+{
+  "name": "acars-server",
+  "version": "4.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start-dev": "npm-run-all clean && nodemon ./src/index.ts",
+    "start-prod": "npm run build-prod && node dist/index.js",
+    "build-dev": "npm-run-all clean && tsc",
+    "build-prod": "npm-run-all clean && tsc"
+  },
+  "keywords": [],
+  "author": "Fred Clausen",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "@airframes/acars-decoder": "^1.4.7",
+    "command-line-args": "^5.2.1",
+    "net": "^1.0.2",
+    "socket.io": "^4.5.4",
+    "uuid": "^9.0.0",
+    "winston": "^3.8.2",
+    "zeromq": "^6.0.0-beta.16"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/uuid": "^9.0.0"
+  }
+}

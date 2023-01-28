@@ -1,0 +1,17 @@
+{
+  "name": "web-css",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "sass": "^1.57.1"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start-dev": "npm run clean && sass --no-source-map --watch scss:dist",
+    "run-prod": "npm run clean && sass --no-source-map"
+  },
+  "keywords": [],
+  "author": "Fred Clausen",
+  "license": "GPL-3.0-only"
+}
