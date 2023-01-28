@@ -29,6 +29,7 @@ export interface ACARSOption {
   AcarsSource: string[];
   VdlmSource: string[];
   IataSourcePath: string;
+  RrdToolPath: string;
 }
 export interface ADSBPosition {
   now: number;

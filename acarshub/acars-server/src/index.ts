@@ -5,6 +5,7 @@ import { MessageReceiver } from "./message-receiver";
 import { ADSBReceiver } from "./adsb-receiver";
 import { AircraftHandler } from "./aircraft-handler";
 import { convertACARS } from "./acars-decoder";
+import { ACARSHubRRDTool } from "./rrd-interface";
 
 const options_getter = require("./acars-options");
 const { combine, timestamp, label, printf } = format;
@@ -18,6 +19,7 @@ const acarshub_format = printf(({ level, message, _, timestamp, source }) => {
 
 let adsb_receiver: ADSBReceiver | undefined = undefined;
 let acars_receivers: MessageReceiver[] = [];
+let rrdtool: ACARSHubRRDTool | undefined = undefined;
 
 const master_logger = createLogger({
   level: log_level,
@@ -115,6 +117,9 @@ if (options.EnableVdlm) {
     acars_receivers.push(vdlm_server);
   });
 }
+
+// start the RRDTool interface
+rrdtool = new ACARSHubRRDTool(options.RrdToolPath);
 
 if (options.EnableAdsb && typeof options.AdsbSource === "string") {
   logger.info("Starting ADSB receivers");

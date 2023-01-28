@@ -174,6 +174,7 @@ const commandOptions: ACARSCommandLine = [
     default: "acars_router:45555",
   },
   { name: "iata-source-path", type: String, default: "/acars/data/iata.json" },
+  { name: "rrd-tool-path", type: String, default: "/run/acars/acarshub.rrd" },
 ];
 
 const options: { [index: string]: CommandLineOption } =
