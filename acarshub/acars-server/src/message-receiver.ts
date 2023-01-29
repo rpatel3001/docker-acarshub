@@ -15,7 +15,7 @@ export class MessageReceiver {
   private _total_messages: number = 0;
   private _total_messages_since_last_update: number = 0;
   private _total_errors_since_last_update: number = 0;
-  private _total_message_last_five_minutes: number = 0;
+  private _total_messages_last_five_minutes: number = 0;
 
   private _interval;
 
@@ -75,7 +75,7 @@ export class MessageReceiver {
   increment_totals(error: number): void {
     this._total_messages += 1;
     this._total_messages_since_last_update += 1;
-    this._total_message_last_five_minutes += 1;
+    this._total_messages_last_five_minutes += 1;
     if (error) {
       this._total_errors_since_last_update += 1;
     }
@@ -85,7 +85,7 @@ export class MessageReceiver {
     this._logger.info(
       `Total ${this._message_type.toUpperCase()} messages for ${
         this._source_url
-      }: ${this._total_message_last_five_minutes} in the last five minutes`
+      }: ${this._total_messages_last_five_minutes} in the last five minutes`
     );
     this._logger.info(
       `Total ${this._message_type.toUpperCase()} messages for ${
@@ -93,7 +93,7 @@ export class MessageReceiver {
       }: ${this._total_messages}`
     );
 
-    this._total_message_last_five_minutes = 0;
+    this._total_messages_last_five_minutes = 0;
   }
 
   grab_rrd_stats() {
