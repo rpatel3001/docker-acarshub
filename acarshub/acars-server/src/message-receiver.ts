@@ -1,6 +1,6 @@
 //const zmq = require("zeromq");
 
-import * as zmq from "zeromq";
+import { Subscriber as ZMQSubscriber } from "zeromq";
 import { Logger } from "winston";
 import { AircraftHandler } from "./aircraft-handler";
 import { convertACARS } from "./acars-decoder";
@@ -8,7 +8,7 @@ export class MessageReceiver {
   private _message_type: string;
   private _source_url: string;
   private _logger: Logger;
-  private _sock: zmq.Subscriber = new zmq.Subscriber();
+  private _sock: ZMQSubscriber = new ZMQSubscriber();
   private _acars_converter: convertACARS;
   private _handler: AircraftHandler;
 
