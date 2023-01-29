@@ -1,4 +1,6 @@
-const zmq = require("zeromq");
+//const zmq = require("zeromq");
+
+import * as zmq from "zeromq";
 import { Logger } from "winston";
 import { AircraftHandler } from "./aircraft-handler";
 import { convertACARS } from "./acars-decoder";
@@ -6,7 +8,7 @@ export class MessageReceiver {
   private _message_type: string;
   private _source_url: string;
   private _logger: Logger;
-  private _sock = new zmq.Subscriber();
+  private _sock: zmq.Subscriber = new zmq.Subscriber();
   private _acars_converter: convertACARS;
   private _handler: AircraftHandler;
 
@@ -95,8 +97,9 @@ export class MessageReceiver {
   }
 
   grab_rrd_stats() {
+    // we should never see this, but......
     if (!this._logger) {
-      console.log("PANIC!", this);
+      console.log("PANIC! No logger has been set up", this);
       return {
         error: 0,
         total: 0,
