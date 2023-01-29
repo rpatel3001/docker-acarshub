@@ -193,6 +193,7 @@ export interface ACARSHubMessage {
   duplicate: boolean;
   num_duplicates: number;
   decoded_message_text?: ACARSDecodedMessage;
+  error: number;
 }
 
 export interface ACARSDecodedMessage {
@@ -218,4 +219,9 @@ export interface ICAOInput {
   name: string;
   iata: string;
   icao: string;
+}
+
+export interface ACARSDecoderStats {
+  total_last_five_minutes: number;
+  error: number;
 }

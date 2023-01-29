@@ -43,7 +43,6 @@ export class convertACARS {
       ? [message.vdl2.avlc.acars.msg_num + message.vdl2.avlc.acars.msg_num_seq]
       : [];
 
-    //   console.log(icao_hex, callsign, tail);
     return {
       type: "VDLM2",
       timestamp: Number(
@@ -63,6 +62,7 @@ export class convertACARS {
         ? message.vdl2.avlc.acars.msg_num + message.vdl2.avlc.acars.msg_num_seq
         : undefined,
       all_message_numbers: sequence,
+      error: Number(message.vdl2.avlc.acars?.err || 0),
     } as ACARSHubMessage;
   };
 
@@ -71,6 +71,7 @@ export class convertACARS {
     message_type: String
   ): ACARSHubMessage => {
     const sequence = message.msgno ? [message.msgno] : [];
+
     return {
       type: message_type,
       timestamp: message.timestamp,
@@ -90,6 +91,7 @@ export class convertACARS {
       num_duplicates: 0,
       message_number: message.msgno,
       all_message_numbers: sequence,
+      error: message.error,
     } as ACARSHubMessage;
   };
 

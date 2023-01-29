@@ -119,7 +119,10 @@ if (options.EnableVdlm) {
 }
 
 // start the RRDTool interface
-rrdtool = new ACARSHubRRDTool(options.RrdToolPath);
+rrdtool = new ACARSHubRRDTool(
+  options.RrdToolPath,
+  master_logger.child({ source: "RRD Database" })
+);
 
 if (options.EnableAdsb && typeof options.AdsbSource === "string") {
   logger.info("Starting ADSB receivers");
@@ -131,6 +134,35 @@ if (options.EnableAdsb && typeof options.AdsbSource === "string") {
   );
   adsb_receiver.continous_receive_adsb();
 }
+
+// turn on RRD logging
+let interval = setInterval(() => {
+  let total_vdlm = 0;
+  let total_acars = 0;
+  let total_error_vdlm = 0;
+  let total_error_acars = 0;
+
+  acars_receivers.forEach((receiver) => {
+    const acars_total = receiver.print_stats();
+
+    if (receiver.get_message_type() === "ACARS") {
+      total_acars += acars_total.total;
+      total_error_acars += acars_total.error;
+    } else if (receiver.get_message_type() === "VDLM2") {
+      total_vdlm += acars_total.total;
+      total_error_vdlm += acars_total.error;
+    } else {
+      logger.error("Unknown message type");
+    }
+  });
+
+  rrdtool?.update_rrd(
+    total_acars,
+    total_vdlm,
+    total_acars + total_vdlm,
+    total_error_acars + total_error_vdlm
+  );
+}, 60000);
 
 logger.info(`Server started with log level ${log_level.toUpperCase()}`);
 

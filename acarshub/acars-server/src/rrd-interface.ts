@@ -1,16 +1,19 @@
 const rrdtool = require("rrdtool");
 const fs = require("fs");
-
+import { Logger } from "winston";
 export class ACARSHubRRDTool {
   private _rrd_db;
-  constructor(rrdtool_path: string) {
+  private _logger: Logger;
+
+  constructor(rrdtool_path: string, logger: Logger) {
+    this._logger = logger;
     this._rrd_db = this.init_rrd(rrdtool_path, rrdtool.now() - 10);
   }
 
   init_rrd = (rrd_file: string, start_time: number) => {
     try {
       if (fs.existsSync(rrd_file)) {
-        console.log("RRD file exists, loading");
+        this._logger.info("RRD file exists, loading");
         return rrdtool.open(rrd_file);
       }
 
@@ -28,11 +31,17 @@ export class ACARSHubRRDTool {
 
       return db;
     } catch (e) {
-      console.error(`Error creating RRD file: ${e}`);
+      this._logger.error(`Error creating RRD file: ${e}`);
     }
   };
 
   update_rrd = (acars: number, vdlm: number, total: number, error: number) => {
-    this._rrd_db.update(rrdtool.now(), acars, vdlm, total, error);
+    this._logger.debug(`Updating RRD: ${acars}, ${vdlm}, ${total}, ${error}`);
+    this._rrd_db.update(rrdtool.now(), {
+      ACARS: acars,
+      VDLM: vdlm,
+      TOTAL: total,
+      ERROR: error,
+    });
   };
 }
