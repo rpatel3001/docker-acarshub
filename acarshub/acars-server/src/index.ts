@@ -143,7 +143,7 @@ let interval = setInterval(() => {
   let total_error_acars = 0;
 
   acars_receivers.forEach((receiver) => {
-    const acars_total = receiver.print_stats();
+    const acars_total = receiver.grab_rrd_stats();
 
     if (receiver.get_message_type() === "ACARS") {
       total_acars += acars_total.total;

@@ -13,6 +13,9 @@ export class MessageReceiver {
   private _total_messages: number = 0;
   private _total_messages_since_last_update: number = 0;
   private _total_errors_since_last_update: number = 0;
+  private _total_message_last_five_minutes: number = 0;
+
+  private _interval;
 
   constructor(
     message_type: string,
@@ -26,6 +29,8 @@ export class MessageReceiver {
     this._logger = logger;
     this._handler = handler;
     this._acars_converter = acars_converter;
+
+    this._interval = setInterval(() => this.print_totals(), 5 * 60000);
   }
 
   get_message_type = (): string => {
@@ -68,12 +73,28 @@ export class MessageReceiver {
   increment_totals(error: number): void {
     this._total_messages += 1;
     this._total_messages_since_last_update += 1;
+    this._total_message_last_five_minutes += 1;
     if (error) {
       this._total_errors_since_last_update += 1;
     }
   }
 
-  print_stats() {
+  print_totals(): void {
+    this._logger.info(
+      `Total ${this._message_type.toUpperCase()} messages for ${
+        this._source_url
+      }: ${this._total_messages} in the last five minutes`
+    );
+    this._logger.info(
+      `Total ${this._message_type.toUpperCase()} messages for ${
+        this._source_url
+      }: ${this._total_messages} in the last five minutes`
+    );
+
+    this._total_message_last_five_minutes = 0;
+  }
+
+  grab_rrd_stats() {
     if (!this._logger) {
       console.log("PANIC!", this);
       return {
