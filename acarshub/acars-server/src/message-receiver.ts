@@ -83,12 +83,12 @@ export class MessageReceiver {
     this._logger.info(
       `Total ${this._message_type.toUpperCase()} messages for ${
         this._source_url
-      }: ${this._total_messages} in the last five minutes`
+      }: ${this._total_message_last_five_minutes} in the last five minutes`
     );
     this._logger.info(
       `Total ${this._message_type.toUpperCase()} messages for ${
         this._source_url
-      }: ${this._total_messages} in the last five minutes`
+      }: ${this._total_messages}`
     );
 
     this._total_message_last_five_minutes = 0;

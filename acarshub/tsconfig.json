@@ -4,6 +4,8 @@
     { "path": "acars-server" },
     { "path": "types" },
     { "path": "web-client" },
-    { "path": "web-server" }
+    { "path": "web-server" },
+    { "path": "web-css" },
+    { "path": "rrdtool" }
   ]
 }
