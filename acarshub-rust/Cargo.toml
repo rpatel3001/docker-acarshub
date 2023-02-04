@@ -1,5 +1,5 @@
 [workspace]
-members = ["rust/bin/acarshub_server"]
+members = ["rust/bin/acarshub_server", "rust/libraries/acarshub_logging"]
 
 [workspace.package]
 name = "acarshub"
