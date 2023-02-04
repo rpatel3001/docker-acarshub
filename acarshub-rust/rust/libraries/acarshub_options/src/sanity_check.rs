@@ -33,6 +33,22 @@ impl Input {
     }
 
     fn check_latitude_and_longitude(&self) -> bool {
+        if self.adsb_address.is_some()
+            && self.map_latitude.is_none()
+            && self.map_longitude.is_none()
+        {
+            warn!("AH_MAP_LATITUDE/--map-latitude and AH_MAP_LONGITUDE/--map-longitude are not set, but AH_ADSB_ADDRESS/--adsb-address is set. This will result in a map that is centered on 0,0. If you want to center the map on a specific location, please provide the latitude and longitude.");
+        }
+
+        if self.map_latitude.is_none() && self.map_longitude.is_none() {
+            return true;
+        } else if (self.map_latitude.is_some() && self.map_longitude.is_none())
+            || (self.map_latitude.is_none() && self.map_longitude.is_some())
+        {
+            error!("AH_MAP_LATITUDE/--map-latitude and AH_MAP_LONGITUDE/--map-longitude must both be provided");
+            return false;
+        }
+
         let input_test_results: Vec<bool> = vec![
             self.map_latitude
                 .check_latitude("AH_MAP_LATITUDE/--map-latitude"),
@@ -238,5 +254,90 @@ impl ValidateLatLon for Option<f64> {
             return false;
         }
         true
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_check_ports_are_valid_with_host() {
+        let valid_hosts: Option<Vec<String>> = Some(vec![
+            "127.0.0.1:8008".to_string(),
+            "10.0.0.1:12345".to_string(),
+            "192.168.1.1:65535".to_string(),
+            "localhost:8008".to_string(),
+            "ok.go:1234".to_string(),
+        ]);
+        let invalid_hosts: Option<Vec<String>> = Some(vec![
+            "127.0.0.1:0".to_string(),
+            "10.0.0.1".to_string(),
+            "192.168.1.1:65536".to_string(),
+            "localhost".to_string(),
+            "alpha.go".to_string(),
+            "localhost:65536".to_string(),
+            "123:456".to_string(),
+            "abc:12three".to_string(),
+            "host:123:456".to_string(),
+        ]);
+        let empty_host_vec: Option<Vec<String>> = Some(vec![]);
+        let valid_hosts_tests: bool = valid_hosts.check_host_is_valid("valid_hosts");
+        let invalid_hosts_tests: bool = invalid_hosts.check_host_is_valid("invalid_hosts");
+        let empty_host_vec_test: bool = empty_host_vec.check_host_is_valid("empty_vec");
+        assert_eq!(valid_hosts_tests, true);
+        assert_eq!(invalid_hosts_tests, false);
+        assert_eq!(empty_host_vec_test, false);
+    }
+
+    #[test]
+    fn test_check_no_duplicate_hosts() {
+        let mut hosts: Input = Input::default();
+        // Generate clean input
+        hosts.adsb_address = Some(vec![
+            "test.com:8080".to_string(),
+            "192.168.1.1:8080".to_string(),
+        ]);
+
+        let valid_hosts_test: bool = hosts.check_no_duplicate_hosts();
+
+        hosts.adsb_address = Some(vec![
+            "test.com:8087".to_string(),
+            "192.168.1.1:8087".to_string(),
+            "test.com:8087".to_string(),
+        ]);
+        let invalid_hosts_test: bool = hosts.check_no_duplicate_hosts();
+
+        assert_eq!(
+            valid_hosts_test, true,
+            "Expected there to be no duplicates for this check"
+        );
+        assert_eq!(
+            invalid_hosts_test, false,
+            "Expected there to be duplicates for this check"
+        );
+    }
+
+    #[test]
+    fn test_adsb_lat_lon() {
+        let mut positions: Input = Input::default();
+        // Generate clean input
+        positions.map_longitude = Some(0.0);
+        positions.map_latitude = Some(0.0);
+
+        let valid_lat_lon_test: bool = positions.check_latitude_and_longitude();
+
+        positions.map_latitude = Some(90.1);
+        positions.map_longitude = Some(180.1);
+        let invalid_lat_lon_test: bool = positions.check_latitude_and_longitude();
+
+        assert_eq!(
+            valid_lat_lon_test, true,
+            "Expected there to be valid lat/lon for this check"
+        );
+        assert_eq!(
+            invalid_lat_lon_test, false,
+            "Expected there to be invalid lat/lon for this check"
+        );
     }
 }
