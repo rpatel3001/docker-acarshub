@@ -78,3 +78,10 @@ repos:
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        args: ["--all", "--manifest-path", "acarshub-rust/Cargo.toml", "--"]
+      - id: cargo-check
+        args: ["--all", "--manifest-path", "acarshub-rust/Cargo.toml", "--"]
