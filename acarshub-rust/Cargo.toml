@@ -1,0 +1,15 @@
+[workspace]
+members = ["rust/bin/acarshub_server"]
+
+[workspace.package]
+name = "acarshub"
+version = "4.0.0-alpha1"
+edition = "2021"
+authors = ["Fred Clausen"]
+description = "ACARS Hub. A suite of tools used to receive and display ACARS/VDL data from airborne aircraft."
+documentation = "https://github.com/sdr-enthusiasts/docker-acarshub"
+homepage = "https://github.com/sdr-enthusiasts/docker-acarshub"
+repository = "https://github.com/sdr-enthusiasts/docker-acarshub"
+readme = "README.md"
+license = "MIT"
+rust-version = "1.67"
