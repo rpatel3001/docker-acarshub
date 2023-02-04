@@ -10,3 +10,8 @@ repository.workspace = true
 readme.workspace = true
 license.workspace = true
 rust-version.workspace = true
+
+[dependencies]
+log = "0.4.17"
+acarshub_options = { path = "../../libraries/acarshub_options" }
+acarshub_logging = { path = "../../libraries/acarshub_logging" }
