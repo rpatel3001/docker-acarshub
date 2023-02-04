@@ -216,7 +216,7 @@ trait ValidateLatLon {
 impl ValidateLatLon for Option<f64> {
     fn check_latitude(&self, name: &str) -> bool {
         if let Some(lat) = self {
-            if lat < &-90.0 || lat > &90.0 {
+            if !(&-90.0..=&90.0).contains(&lat) {
                 error!("{} is not a valid latitude: {}", name, lat);
                 return false;
             }
@@ -229,7 +229,7 @@ impl ValidateLatLon for Option<f64> {
 
     fn check_longitude(&self, name: &str) -> bool {
         if let Some(lon) = self {
-            if lon < &-180.0 || lon > &180.0 {
+            if !(&-180.0..=&180.0).contains(&lon) {
                 error!("{} is not a valid longitude: {}", name, lon);
                 return false;
             }
