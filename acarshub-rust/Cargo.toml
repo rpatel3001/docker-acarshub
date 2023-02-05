@@ -3,6 +3,7 @@ members = [
     "rust/bin/acarshub_server",
     "rust/libraries/acarshub_logging",
     "rust/libraries/acarshub_options",
+    "rust/libraries/acarshub_connection_manager",
 ]
 
 [workspace.package]

@@ -14,9 +14,11 @@ use acarshub_logging::SetupLogging;
 use acarshub_options::clap::Parser;
 use acarshub_options::Input;
 
+use std::error::Error;
 use std::process;
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     let args: Input = Input::parse();
     args.verbose.enable_logging();
     args.print_values();
@@ -29,4 +31,6 @@ fn main() {
             process::exit(1);
         }
     }
+
+    Ok(())
 }
