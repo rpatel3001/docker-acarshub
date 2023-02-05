@@ -86,3 +86,5 @@ repos:
         args: ["--all", "--manifest-path", "acarshub-rust/Cargo.toml", "--"]
       - id: cargo-check
         args: ["--all", "--manifest-path", "acarshub-rust/Cargo.toml", "--"]
+      - id: clippy
+        args: ["--all", "--manifest-path", "acarshub-rust/Cargo.toml", "--"]
