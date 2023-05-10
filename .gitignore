@@ -134,3 +134,4 @@ rootfs/webapp/static
 acarshub/node_modules
 **/dist/**
 **/target
+acarshub-typescript/package-lock.json
